@@ -45,6 +45,12 @@
 Module.symvers
 modules.builtin
 
+
+#
+# Output directory (make O=out)
+#
+/out
+
 #
 # Top-level generic files
 #

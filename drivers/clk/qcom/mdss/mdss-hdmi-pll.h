@@ -29,7 +29,7 @@ static inline struct hdmi_pll_vco_clk *to_hdmi_vco_clk_hw(struct clk_hw *hw)
 	return container_of(hw, struct hdmi_pll_vco_clk, hw);
 }
 
-int hdmi_pll_clock_register_28lpm(struct platform_device *pdev,
+int hdmi_pll_clock_register_28nm(struct platform_device *pdev,
 				struct mdss_pll_resources *pll_res);
 
 int hdmi_pll_clock_register(struct platform_device *pdev,

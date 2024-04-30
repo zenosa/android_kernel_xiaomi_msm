@@ -163,7 +163,7 @@ static int dsi_pll_enable_seq_tsmc(struct mdss_pll_resources *rsc)
 	return pll_locked ? 0 : -EINVAL;
 }
 
-static struct regmap_config dsi_pll_28lpm_config = {
+static struct regmap_config dsi_pll_28nm_config = {
 	.reg_bits = 32,
 	.reg_stride = 4,
 	.val_bits = 32,
@@ -185,7 +185,7 @@ static struct regmap_bus pclk_src_regmap_bus = {
 	.reg_read = pixel_clk_get_div,
 };
 
-static const struct clk_ops clk_ops_vco_28lpm = {
+static const struct clk_ops clk_ops_vco_28nm = {
 	.recalc_rate = vco_28nm_recalc_rate,
 	.set_rate = vco_28nm_set_rate,
 	.round_rate = vco_28nm_round_rate,
@@ -213,7 +213,7 @@ static struct dsi_pll_vco_clk dsi0pll_vco_clk = {
 			.name = "dsi0pll_vco_clk",
 			.parent_names = (const char *[]){"bi_tcxo"},
 			.num_parents = 1,
-			.ops = &clk_ops_vco_28lpm,
+			.ops = &clk_ops_vco_28nm,
 			.flags = CLK_GET_RATE_NOCACHE,
 	},
 };
@@ -238,7 +238,7 @@ static struct dsi_pll_vco_clk dsi1pll_vco_clk = {
 			.name = "dsi1pll_vco_clk",
 			.parent_names = (const char *[]){"bi_tcxo"},
 			.num_parents = 1,
-			.ops = &clk_ops_vco_28lpm,
+			.ops = &clk_ops_vco_28nm,
 			.flags = CLK_GET_RATE_NOCACHE,
 	},
 };
@@ -387,7 +387,7 @@ static struct clk_regmap_div dsi1pll_pclk_src = {
 	},
 };
 
-static struct clk_hw *mdss_dsi_pllcc_28lpm[] = {
+static struct clk_hw *mdss_dsi_pllcc_28nm[] = {
 	[VCOCLK_0] = &dsi0pll_vco_clk.hw,
 	[ANALOG_POSTDIV_0_CLK] = &dsi0pll_analog_postdiv.clkr.hw,
 	[INDIRECT_PATH_SRC_0_CLK] = &dsi0pll_indirect_path_src.hw,
@@ -402,13 +402,13 @@ static struct clk_hw *mdss_dsi_pllcc_28lpm[] = {
 	[PCLK_SRC_1_CLK] = &dsi1pll_pclk_src.clkr.hw,
 };
 
-int dsi_pll_clock_register_28lpm(struct platform_device *pdev,
+int dsi_pll_clock_register_28nm(struct platform_device *pdev,
 				struct mdss_pll_resources *pll_res)
 {
 	int rc = 0, ndx, i;
 	struct clk *clk;
 	struct clk_onecell_data *clk_data;
-	int num_clks = ARRAY_SIZE(mdss_dsi_pllcc_28lpm);
+	int num_clks = ARRAY_SIZE(mdss_dsi_pllcc_28nm);
 	struct regmap *rmap;
 
 	int const ssc_freq_min = 30000; /* min. recommended freq. value */
@@ -459,7 +459,7 @@ int dsi_pll_clock_register_28lpm(struct platform_device *pdev,
 	/* Establish client data */
 	if (ndx == 0) {
 		rmap = devm_regmap_init(&pdev->dev, &byteclk_src_mux_regmap_bus,
-				pll_res, &dsi_pll_28lpm_config);
+				pll_res, &dsi_pll_28nm_config);
 		if (IS_ERR(rmap)) {
 			pr_err("regmap init failed for DSI clock:%d\n",
 					pll_res->index);
@@ -468,7 +468,7 @@ int dsi_pll_clock_register_28lpm(struct platform_device *pdev,
 		dsi0pll_byteclk_src_mux.clkr.regmap = rmap;
 
 		rmap = devm_regmap_init(&pdev->dev, &analog_postdiv_regmap_bus,
-				pll_res, &dsi_pll_28lpm_config);
+				pll_res, &dsi_pll_28nm_config);
 		if (IS_ERR(rmap)) {
 			pr_err("regmap init failed for DSI clock:%d\n",
 					pll_res->index);
@@ -477,7 +477,7 @@ int dsi_pll_clock_register_28lpm(struct platform_device *pdev,
 		dsi0pll_analog_postdiv.clkr.regmap = rmap;
 
 		rmap = devm_regmap_init(&pdev->dev, &pclk_src_regmap_bus,
-				pll_res, &dsi_pll_28lpm_config);
+				pll_res, &dsi_pll_28nm_config);
 		if (IS_ERR(rmap)) {
 			pr_err("regmap init failed for DSI clock:%d\n",
 					pll_res->index);
@@ -488,7 +488,7 @@ int dsi_pll_clock_register_28lpm(struct platform_device *pdev,
 		dsi0pll_vco_clk.priv = pll_res;
 		for (i = VCOCLK_0; i <= PCLK_SRC_0_CLK; i++) {
 			clk = devm_clk_register(&pdev->dev,
-						mdss_dsi_pllcc_28lpm[i]);
+						mdss_dsi_pllcc_28nm[i]);
 			if (IS_ERR(clk)) {
 				pr_err("clk registration failed for DSI clock:%d\n",
 							pll_res->index);
@@ -504,7 +504,7 @@ int dsi_pll_clock_register_28lpm(struct platform_device *pdev,
 
 	} else {
 		rmap = devm_regmap_init(&pdev->dev, &byteclk_src_mux_regmap_bus,
-				pll_res, &dsi_pll_28lpm_config);
+				pll_res, &dsi_pll_28nm_config);
 		if (IS_ERR(rmap)) {
 			pr_err("regmap init failed for DSI clock:%d\n",
 					pll_res->index);
@@ -513,7 +513,7 @@ int dsi_pll_clock_register_28lpm(struct platform_device *pdev,
 		dsi1pll_byteclk_src_mux.clkr.regmap = rmap;
 
 		rmap = devm_regmap_init(&pdev->dev, &analog_postdiv_regmap_bus,
-				pll_res, &dsi_pll_28lpm_config);
+				pll_res, &dsi_pll_28nm_config);
 		if (IS_ERR(rmap)) {
 			pr_err("regmap init failed for DSI clock:%d\n",
 					pll_res->index);
@@ -522,7 +522,7 @@ int dsi_pll_clock_register_28lpm(struct platform_device *pdev,
 		dsi1pll_analog_postdiv.clkr.regmap = rmap;
 
 		rmap = devm_regmap_init(&pdev->dev, &pclk_src_regmap_bus,
-				pll_res, &dsi_pll_28lpm_config);
+				pll_res, &dsi_pll_28nm_config);
 		if (IS_ERR(rmap)) {
 			pr_err("regmap init failed for DSI clock:%d\n",
 					pll_res->index);
@@ -533,7 +533,7 @@ int dsi_pll_clock_register_28lpm(struct platform_device *pdev,
 		dsi1pll_vco_clk.priv = pll_res;
 		for (i = VCOCLK_1; i <= PCLK_SRC_1_CLK; i++) {
 			clk = devm_clk_register(&pdev->dev,
-						mdss_dsi_pllcc_28lpm[i]);
+						mdss_dsi_pllcc_28nm[i]);
 			if (IS_ERR(clk)) {
 				pr_err("clk registration failed for DSI clock:%d\n",
 							pll_res->index);

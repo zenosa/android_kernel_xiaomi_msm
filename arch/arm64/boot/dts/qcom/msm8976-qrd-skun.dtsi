@@ -47,7 +47,7 @@
 
 		home {
 			label = "home";
-			gpios = <&msm_gpio 112 0x1>;
+			gpios = <&tlmm 112 0x1>;
 			linux,input-type = <1>;
 			linux,code = <102>;
 			gpio-key,wakeup;
@@ -56,7 +56,7 @@
 
 		vol_up {
 			label = "volume_up";
-			gpios = <&msm_gpio 113 0x1>;
+			gpios = <&tlmm 113 0x1>;
 			linux,input-type = <1>;
 			linux,code = <115>;
 			gpio-key,wakeup;
@@ -129,7 +129,7 @@
 
 &tlmm {
 	tlmm_gpio_key {
-		qcom,pins = <&gp 112>, <&gp 113>;
+		qcom,pins = <&tlmm 112>, <&tlmm 113>;
 		qcom,num-grp-pins = <2>;
 	};
 };
@@ -166,5 +166,5 @@
 	pinctrl-1 = <&mdss_dsi_suspend &mdss_te_suspend>;
 	qcom,dsi-pref-prim-pan = <&dsi_otm1906c_1080p_cmd>;
 
-	qcom,platform-reset-gpio = <&msm_gpio 25 0>;
+	qcom,platform-reset-gpio = <&tlmm 25 0>;
 };

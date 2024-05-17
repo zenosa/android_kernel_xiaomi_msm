@@ -106,11 +106,11 @@
 #define RPM_SMD_CXO_A2				56
 #define RPM_SMD_CXO_A2_A			57
 #define RPM_SMD_DIV_CLK1			58
-#define RPM_SMD_DIV_A_CLK1			59
+#define RPM_SMD_DIV_CLK1_A			59
 #define RPM_SMD_DIV_CLK2			60
-#define RPM_SMD_DIV_A_CLK2			61
+#define RPM_SMD_DIV_CLK2_A			61
 #define RPM_SMD_DIV_CLK3			61
-#define RPM_SMD_DIV_A_CLK3			62
+#define RPM_SMD_DIV_CLK3_A			62
 #define RPM_SMD_DIFF_CLK			63
 #define RPM_SMD_DIFF_A_CLK			64
 #define RPM_SMD_CXO_D0_PIN			64

@@ -538,8 +538,8 @@ DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8974, cxo_a0, cxo_a0_a, 4);
 DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8974, cxo_a1, cxo_a1_a, 5);
 DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8974, cxo_a2, cxo_a2_a, 6);
 DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8974, diff_clk, diff_a_clk, 7);
-DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8974, div_clk1, div_a_clk1, 11);
-DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8974, div_clk2, div_a_clk2, 12);
+DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8974, div_clk1, div_clk1_a, 11);
+DEFINE_CLK_SMD_RPM_XO_BUFFER(msm8974, div_clk2, div_clk2_a, 12);
 DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8974, cxo_d0_pin, cxo_d0_a_pin, 1);
 DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8974, cxo_d1_pin, cxo_d1_a_pin, 2);
 DEFINE_CLK_SMD_RPM_XO_BUFFER_PINCTRL(msm8974, cxo_a0_pin, cxo_a0_a_pin, 4);
@@ -574,9 +574,9 @@ static struct clk_hw *msm8974_clks[] = {
 	[RPM_SMD_DIFF_CLK]		= &msm8974_diff_clk.hw,
 	[RPM_SMD_DIFF_A_CLK]		= &msm8974_diff_a_clk.hw,
 	[RPM_SMD_DIV_CLK1]		= &msm8974_div_clk1.hw,
-	[RPM_SMD_DIV_A_CLK1]		= &msm8974_div_a_clk1.hw,
+	[RPM_SMD_DIV_CLK1_A]		= &msm8974_div_clk1_a.hw,
 	[RPM_SMD_DIV_CLK2]		= &msm8974_div_clk2.hw,
-	[RPM_SMD_DIV_A_CLK2]		= &msm8974_div_a_clk2.hw,
+	[RPM_SMD_DIV_CLK2_A]		= &msm8974_div_clk2_a.hw,
 	[RPM_SMD_CXO_D0_PIN]		= &msm8974_cxo_d0_pin.hw,
 	[RPM_SMD_CXO_D0_A_PIN]		= &msm8974_cxo_d0_a_pin.hw,
 	[RPM_SMD_CXO_D1_PIN]		= &msm8974_cxo_d1_pin.hw,
@@ -629,7 +629,7 @@ static struct clk_hw *msm8976_clks[] = {
 	[RPM_SMD_RF_CLK2]		= &msm8976_rf_clk2.hw,
 	[RPM_SMD_RF_CLK2_A]		= &msm8976_rf_clk2_a.hw,
 	[RPM_SMD_DIV_CLK2]		= &msm8976_div_clk2.hw,
-	[RPM_SMD_DIV_A_CLK2]		= &msm8976_div_a_clk2.hw,
+	[RPM_SMD_DIV_CLK2_A]		= &msm8976_div_clk2_a.hw,
 	[RPM_SMD_BB_CLK1_PIN]		= &msm8976_bb_clk1_pin.hw,
 	[RPM_SMD_BB_CLK1_A_PIN]		= &msm8976_bb_clk1_a_pin.hw,
 	[RPM_SMD_BB_CLK2_PIN]		= &msm8976_bb_clk2_pin.hw,
@@ -702,11 +702,11 @@ static struct clk_hw *msm8996_clks[] = {
 	[RPM_SMD_LN_BB_CLK] = &msm8996_ln_bb_clk.hw,
 	[RPM_SMD_LN_BB_CLK_A] = &msm8996_ln_bb_a_clk.hw,
 	[RPM_SMD_DIV_CLK1] = &msm8996_div_clk1.hw,
-	[RPM_SMD_DIV_A_CLK1] = &msm8996_div_clk1_a.hw,
+	[RPM_SMD_DIV_CLK1_A] = &msm8996_div_clk1_a.hw,
 	[RPM_SMD_DIV_CLK2] = &msm8996_div_clk2.hw,
-	[RPM_SMD_DIV_A_CLK2] = &msm8996_div_clk2_a.hw,
+	[RPM_SMD_DIV_CLK2_A] = &msm8996_div_clk2_a.hw,
 	[RPM_SMD_DIV_CLK3] = &msm8996_div_clk3.hw,
-	[RPM_SMD_DIV_A_CLK3] = &msm8996_div_clk3_a.hw,
+	[RPM_SMD_DIV_CLK3_A] = &msm8996_div_clk3_a.hw,
 	[RPM_SMD_BB_CLK1_PIN] = &msm8996_bb_clk1_pin.hw,
 	[RPM_SMD_BB_CLK1_A_PIN] = &msm8996_bb_clk1_a_pin.hw,
 	[RPM_SMD_BB_CLK2_PIN] = &msm8996_bb_clk2_pin.hw,
@@ -1079,7 +1079,7 @@ static struct clk_hw *sdm660_clks[] = {
 	[RPM_SMD_CE1_CLK]           = &sdm660_ce1_clk.hw,
 	[RPM_SMD_CE1_A_CLK]         = &sdm660_ce1_a_clk.hw,
 	[RPM_SMD_DIV_CLK1]          = &sdm660_div_clk1.hw,
-	[RPM_SMD_DIV_A_CLK1]       = &sdm660_div_clk1_ao.hw,
+	[RPM_SMD_DIV_CLK1_A]       = &sdm660_div_clk1_ao.hw,
 	[RPM_SMD_LN_BB_CLK1]        = &sdm660_ln_bb_clk1.hw,
 	[RPM_SMD_LN_BB_CLK1_A]        = &sdm660_ln_bb_clk1_ao.hw,
 	[RPM_SMD_LN_BB_CLK1_PIN]    = &sdm660_ln_bb_clk1_pin.hw,
@@ -1197,7 +1197,7 @@ static struct clk_hw *qm215_clks[] = {
 	[RPM_SMD_RF_CLK2] = &sdm429w_rf_clk2.hw,
 	[RPM_SMD_RF_CLK2_A] = &sdm429w_rf_clk2_a.hw,
 	[RPM_SMD_DIV_CLK2] = &sdm429w_div_clk2.hw,
-	[RPM_SMD_DIV_A_CLK2] = &sdm429w_div_clk2_a.hw,
+	[RPM_SMD_DIV_CLK2_A] = &sdm429w_div_clk2_a.hw,
 	[PNOC_MSMBUS_CLK] = &pnoc_msmbus_clk.hw,
 	[PNOC_MSMBUS_A_CLK] = &pnoc_msmbus_a_clk.hw,
 	[PNOC_KEEPALIVE_A_CLK] = &pnoc_keepalive_a_clk.hw,

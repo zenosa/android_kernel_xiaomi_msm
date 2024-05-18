@@ -14,9 +14,7 @@
 	qcom,msm-id = <278 0x0>;
 	interrupt-parent = <&wakegic>;
 
-	chosen {
-		bootargs = "boot_cpus=0,1,2,3,4 sched_enable_hmp=1";
-	};
+	chosen {};
 
 	firmware: firmware {
 		android {

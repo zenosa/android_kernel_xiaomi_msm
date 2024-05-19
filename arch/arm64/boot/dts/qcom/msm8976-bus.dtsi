@@ -412,9 +412,9 @@
 			qcom,mas-rpm-id = <ICBID_MASTER_VIDEO_P1>;
 		};
 
-		mas_vfe_0: mas-vfe-0 {
+		mas_vfe0: mas-vfe0 {
 			cell-id = <MSM_BUS_MASTER_VFE0>;
-			label = "mas-vfe-0";
+			label = "mas-vfe0";
 			qcom,buswidth = <16>;
 			qcom,agg-ports = <1>;
 			qcom,ap-owned;
@@ -425,9 +425,9 @@
 			qcom,mas-rpm-id = <ICBID_MASTER_VFE0>;
 		};
 
-		mas_vfe_1: mas-vfe-1 {
+		mas_vfe1: mas-vfe1 {
 			cell-id = <MSM_BUS_MASTER_VFE1>;
-			label = "mas-vfe-1";
+			label = "mas-vfe1";
 			qcom,buswidth = <16>;
 			qcom,agg-ports = <1>;
 			qcom,ap-owned;

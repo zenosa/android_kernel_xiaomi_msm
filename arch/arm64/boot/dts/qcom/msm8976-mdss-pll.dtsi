@@ -1,16 +1,21 @@
 // SPDX-License-Identifier: GPL-2.0
 // Copyright (c) 2015, The Linux Foundation. All rights reserved.
-// Copyright (c) 2023, Benarji Anand <benarji385@gmail.com>
+// Copyright (c) 2023-2024, Benarji Anand <benarji385@gmail.com>
 
 &soc {
 	mdss_dsi0_pll: qcom,mdss_dsi_pll@1a94a00 {
-		compatible = "qcom,mdss_dsi_pll_8976";
+		compatible = "qcom,mdss_dsi_pll_28nm";
 		label = "MDSS DSI 0 PLL";
 		cell-index = <0>;
 		#clock-cells = <1>;
 
 		reg = <0x1a94a00 0xd4>, <0x0184d074 0x8>;
 		reg-names = "pll_base", "gdsc_base";
+
+		qcom,dsi-pll-ssc-en;
+		qcom,dsi-pll-ssc-mode = "down-spread";
+		qcom,ssc-frequency-hz = <30000>;
+		qcom,ssc-ppm = <5000>;
 
 		gdsc-supply = <&gdsc_mdss>;
 
@@ -34,13 +39,18 @@
 	};
 
 	mdss_dsi1_pll: qcom,mdss_dsi_pll@1a96a00 {
-		compatible = "qcom,mdss_dsi_pll_8976";
+		compatible = "qcom,mdss_dsi_pll_28nm";
 		label = "MDSS DSI 1 PLL";
 		cell-index = <1>;
 		#clock-cells = <1>;
 
 		reg = <0x1a96a00 0xd4>, <0x0184d074 0x8>;
 		reg-names = "pll_base", "gdsc_base";
+
+		qcom,dsi-pll-ssc-en;
+		qcom,dsi-pll-ssc-mode = "down-spread";
+		qcom,ssc-frequency-hz = <30000>;
+		qcom,ssc-ppm = <5000>;
 
 		gdsc-supply = <&gdsc_mdss>;
 

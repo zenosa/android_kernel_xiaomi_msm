@@ -3663,6 +3663,19 @@ static struct clk_branch gcc_venus_tbu_clk = {
 	}
 };
 
+static struct clk_branch gcc_vfe0_tbu_clk = {
+	.halt_reg = 0x1203c,
+	.halt_check = BRANCH_HALT_VOTED,
+	.clkr = {
+		.enable_reg = 0x4500c,
+		.enable_mask = BIT(9),
+		.hw.init = &(struct clk_init_data){
+			.name = "gcc_vfe0_tbu_clk",
+			.ops = &clk_branch2_ops,
+		}
+	}
+};
+
 static struct clk_branch gcc_vfe1_tbu_clk = {
 	.halt_reg = 0x12090,
 	.halt_check = BRANCH_HALT_VOTED,
@@ -3671,19 +3684,6 @@ static struct clk_branch gcc_vfe1_tbu_clk = {
 		.enable_mask = BIT(17),
 		.hw.init = &(struct clk_init_data){
 			.name = "gcc_vfe1_tbu_clk",
-			.ops = &clk_branch2_ops,
-		}
-	}
-};
-
-static struct clk_branch gcc_vfe_tbu_clk = {
-	.halt_reg = 0x1203c,
-	.halt_check = BRANCH_HALT_VOTED,
-	.clkr = {
-		.enable_reg = 0x4500c,
-		.enable_mask = BIT(9),
-		.hw.init = &(struct clk_init_data){
-			.name = "gcc_vfe_tbu_clk",
 			.ops = &clk_branch2_ops,
 		}
 	}
@@ -3823,8 +3823,8 @@ static struct clk_regmap *gcc_msm8976_clocks[] = {
 	[GCC_MDP_TBU_CLK] = &gcc_mdp_tbu_clk.clkr,
 	[GCC_SMMU_CFG_CLK] = &gcc_smmu_cfg_clk.clkr,
 	[GCC_VENUS_TBU_CLK] = &gcc_venus_tbu_clk.clkr,
+	[GCC_VFE0_TBU_CLK] = &gcc_vfe0_tbu_clk.clkr,
 	[GCC_VFE1_TBU_CLK] = &gcc_vfe1_tbu_clk.clkr,
-	[GCC_VFE_TBU_CLK] = &gcc_vfe_tbu_clk.clkr,
 	[CAMSS_TOP_AHB_CLK_SRC] = &camss_top_ahb_clk_src.clkr,
 	[CSI0_CLK_SRC] = &csi0_clk_src.clkr,
 	[APSS_AHB_CLK_SRC] = &apss_ahb_clk_src.clkr,

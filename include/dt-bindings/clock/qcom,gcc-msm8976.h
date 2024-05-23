@@ -185,8 +185,8 @@
 #define GCC_VENUS0_CORE1_VCODEC0_CLK		171
 #define GCC_VENUS0_VCODEC0_CLK		        172
 #define GCC_VENUS_TBU_CLK			173
-#define GCC_VFE1_TBU_CLK			174
-#define GCC_VFE_TBU_CLK			        175
+#define GCC_VFE0_TBU_CLK			174
+#define GCC_VFE1_TBU_CLK			175
 #define GFX3D_CLK_SRC				176
 #define GP1_CLK_SRC				177
 #define GP2_CLK_SRC				178

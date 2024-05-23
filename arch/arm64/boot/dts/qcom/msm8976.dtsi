@@ -437,6 +437,17 @@
 		clock-frequency = <32768>;
 	};
 
+	cci_cache: qcom,cci {
+		compatible = "devfreq-simple-dev";
+		governor = "cpufreq";
+		freq-tbl-khz =
+			<  307200 >, /* SVS    */
+			<  403200 >, /* SVS+   */
+			<  441600 >, /* NOM    */
+			<  556800 >, /* TURBO  */
+			<  614400 >; /* STURBO */
+	};
+
 	cpubw: qcom,cpubw {
 		compatible = "qcom,devbw";
 		governor = "cpufreq";

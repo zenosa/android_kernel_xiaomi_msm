@@ -1449,23 +1449,45 @@ static struct clk_rcg2 sdcc3_apps_clk_src = {
 	}
 };
 
-static const struct freq_tbl ftbl_usb_hs_system_clk_src[] = {
-	F(80000000, P_GPLL0, 10, 0, 0),
-	F(100000000, P_GPLL0, 8, 0, 0),
-	F(133330000, P_GPLL0, 6, 0, 0),
-	F(177780000, P_GPLL0, 4.5, 0, 0),
+static const struct freq_tbl ftbl_usb30_master_clk_src[] = {
+	F(33333333, P_GPLL0_DIV2, 9, 0, 0),
+	F(66666667, P_GPLL0_DIV2, 4.5, 0, 0),
+	F(133333333, P_GPLL0, 4.5, 0, 0),
+	F(200000000, P_GPLL0, 3, 0, 0),
+	F(240000000, P_GPLL0, 2.5, 0, 0),
 	{ }
 };
 
-static struct clk_rcg2 usb_hs_system_clk_src = {
-	.cmd_rcgr = 0x41010,
+static struct clk_rcg2 usb30_master_clk_src = {
+	.cmd_rcgr = 0x3f00c,
 	.hid_width = 5,
-	.parent_map = gcc_parent_map_9,
-	.freq_tbl = ftbl_usb_hs_system_clk_src,
-	.clkr.hw.init = &(struct clk_init_data){
-		.name = "usb_hs_system_clk_src",
-		.parent_names = gcc_parent_names_9,
-		.num_parents = ARRAY_SIZE(gcc_parent_names_9),
+	.freq_tbl = ftbl_usb30_master_clk_src,
+	.parent_map = gcc_parent_map_0,
+	.clkr.hw.init = &(struct clk_init_data) {
+		.name = "usb30_master_clk_src",
+		.parent_names = gcc_parent_names_0,
+		.num_parents = ARRAY_SIZE(gcc_parent_names_0),
+		.ops = &clk_rcg2_ops,
+	}
+};
+
+static const struct freq_tbl ftbl_usb30_mock_utmi_clk_src[] = {
+	F(19200000, P_XO, 1, 0, 0),
+	F(20000000, P_GPLL6_DIV2, 15, 0, 0),
+	F(60000000, P_GPLL6_DIV2, 5, 0, 0),
+	{ }
+};
+
+static struct clk_rcg2 usb30_mock_utmi_clk_src = {
+	.cmd_rcgr = 0x3f020,
+	.hid_width = 5,
+	.mnd_width = 8,
+	.freq_tbl = ftbl_usb30_mock_utmi_clk_src,
+	.parent_map = gcc_parent_map_0,
+	.clkr.hw.init = &(struct clk_init_data) {
+		.name = "usb30_mock_utmi_clk_src",
+		.parent_names = gcc_parent_names_0,
+		.num_parents = ARRAY_SIZE(gcc_parent_names_0),
 		.ops = &clk_rcg2_ops,
 	}
 };
@@ -3318,6 +3340,24 @@ static struct clk_branch gcc_oxili_timer_clk = {
 	}
 };
 
+static struct clk_branch gcc_pcnoc_usb3_axi_clk = {
+	.halt_reg = 0x3f038,
+	.halt_check = BRANCH_HALT,
+	.clkr = {
+		.enable_reg = 0x3f038,
+		.enable_mask = BIT(0),
+		.hw.init = &(struct clk_init_data) {
+			.name = "gcc_pcnoc_usb3_axi_clk",
+                        .parent_names = (const char *[]){
+				"usb30_master_clk_src",
+			},
+			.num_parents = 1,
+			.ops = &clk_branch2_ops,
+			.flags = CLK_SET_RATE_PARENT,
+		}
+	}
+};
+
 static struct clk_branch gcc_pdm2_clk = {
 	.halt_reg = 0x4400c,
 	.halt_check = BRANCH_HALT,
@@ -3517,57 +3557,79 @@ static struct clk_branch gcc_smmu_cfg_clk = {
 	}
 };
 
-static struct clk_branch gcc_usb2a_phy_sleep_clk = {
-	.halt_reg = 0x4102c,
+static struct clk_branch gcc_usb30_master_clk = {
+	.halt_reg = 0x3f000,
+	.halt_check = BRANCH_HALT,
 	.clkr = {
-		.enable_reg = 0x4102c,
+		.enable_reg = 0x3f000,
 		.enable_mask = BIT(0),
-		.hw.init = &(struct clk_init_data){
-			.name = "gcc_usb2a_phy_sleep_clk",
-			.ops = &clk_branch2_ops,
-		},
-	},
-};
-
-static struct clk_branch gcc_usb_hs_ahb_clk = {
-	.halt_reg = 0x41008,
-	.clkr = {
-		.enable_reg = 0x41008,
-		.enable_mask = BIT(0),
-		.hw.init = &(struct clk_init_data){
-			.name = "gcc_usb_hs_ahb_clk",
-			.ops = &clk_branch2_ops,
-		},
-	},
-};
-
-static struct clk_branch gcc_usb_hs_phy_cfg_ahb_clk = {
-	.halt_reg = 0x41030,
-	.clkr = {
-		.enable_reg = 0x41030,
-		.enable_mask = BIT(0),
-		.hw.init = &(struct clk_init_data){
-			.name = "gcc_usb_hs_phy_cfg_ahb_clk",
-			.ops = &clk_branch2_ops,
-		},
-	},
-};
-
-static struct clk_branch gcc_usb_hs_system_clk = {
-	.halt_reg = 0x41004,
-	.clkr = {
-		.enable_reg = 0x41004,
-		.enable_mask = BIT(0),
-		.hw.init = &(struct clk_init_data){
-			.name = "gcc_usb_hs_system_clk",
+		.hw.init = &(struct clk_init_data) {
+			.name = "gcc_usb30_master_clk",
 			.parent_names = (const char *[]){
-				"usb_hs_system_clk_src",
+				"usb30_master_clk_src",
 			},
 			.num_parents = 1,
-			.flags = CLK_SET_RATE_PARENT,
 			.ops = &clk_branch2_ops,
-		},
-	},
+			.flags = CLK_SET_RATE_PARENT,
+		}
+	}
+};
+
+static struct clk_branch gcc_usb30_mock_utmi_clk = {
+	.halt_reg = 0x3f008,
+	.halt_check = BRANCH_HALT,
+	.clkr = {
+		.enable_reg = 0x3f008,
+		.enable_mask = BIT(0),
+		.hw.init = &(struct clk_init_data) {
+			.name = "gcc_usb30_mock_utmi_clk",
+			.parent_names = (const char *[]){
+				"usb30_mock_utmi_clk_src",
+			},
+			.num_parents = 1,
+			.ops = &clk_branch2_ops,
+			.flags = CLK_SET_RATE_PARENT,
+		}
+	}
+};
+
+static struct clk_branch gcc_usb30_sleep_clk = {
+	.halt_reg = 0x3f004,
+	.halt_check = BRANCH_HALT,
+	.clkr = {
+		.enable_reg = 0x3f004,
+		.enable_mask = BIT(0),
+		.hw.init = &(struct clk_init_data) {
+			.name = "gcc_usb30_sleep_clk",
+			.ops = &clk_branch2_ops,
+		}
+	}
+};
+
+static struct clk_branch gcc_usb3_pipe_clk = {
+	.halt_reg = 0,
+	.halt_check = BRANCH_HALT_DELAY,
+	.clkr = {
+		.enable_reg = 0x3f040,
+		.enable_mask = BIT(0),
+		.hw.init = &(struct clk_init_data) {
+			.name = "gcc_usb3_pipe_clk",
+			.ops = &clk_branch2_ops,
+		}
+	}
+};
+
+static struct clk_branch gcc_usb_phy_cfg_ahb_clk = {
+	.halt_reg = 0x3f080,
+	.halt_check = BRANCH_VOTED,
+	.clkr = {
+		.enable_reg = 0x3f080,
+		.enable_mask = BIT(0),
+		.hw.init = &(struct clk_init_data) {
+			.name = "gcc_usb_phy_cfg_ahb_clk",
+			.ops = &clk_branch2_ops,
+		}
+	}
 };
 
 static struct clk_branch gcc_venus0_ahb_clk = {
@@ -3743,7 +3805,8 @@ static struct gdsc jpeg_gdsc = {
 
 static struct gdsc vfe0_gdsc = {
 	.gdscr = 0x58034,
-	.cxcs = (unsigned int []){ 0x58038, 0x58048, 0x5600c, 0x58050 },
+	.cxcs = (unsigned int []){ 0x58038, 0x58048,
+	          0x5600c, 0x58050 },
 	.cxc_count = 4,
 	.pd = {
 		.name = "vfe0_gdsc",
@@ -3753,7 +3816,8 @@ static struct gdsc vfe0_gdsc = {
 
 static struct gdsc vfe1_gdsc = {
 	.gdscr = 0x5806c,
-	.cxcs = (unsigned int []){ 0x5805c, 0x58068, 0x5600c, 0x58074 },
+	.cxcs = (unsigned int []){ 0x5805c, 0x58068,
+	          0x5600c, 0x58074 },
 	.cxc_count = 4,
 	.pd = {
 		.name = "vfe1_gdsc",
@@ -3794,8 +3858,20 @@ static struct gdsc cpp_gdsc = {
 	.pwrsts = PWRSTS_OFF_ON,
 };
 
+static struct gdsc usb30_gdsc = {
+	.gdscr = 0x3f078,
+	.cxcs  = (unsigned int []){ 0x3f000, 0x3f004,
+	            0x3f008, 0x3f040 },
+	.cxc_count = 4,
+	.pd = {
+		.name = "usb30_gdsc",
+	},
+	.pwrsts = PWRSTS_OFF_ON,
+	.flags = ALWAYS_ON,
+};
+
 static struct clk_hw *gcc_msm8976_hws[] = {
-	[GCC_XO] =      &xo.hw,
+	[GCC_XO] = &xo.hw,
 	[GCC_GPLL0_EARLY_DIV] = &gpll0_early_div.hw,
 	[GCC_GPLL6_EARLY_DIV] = &gpll6_early_div.hw,
 };
@@ -3807,36 +3883,9 @@ static struct clk_regmap *gcc_msm8976_clocks[] = {
 	[GPLL3] = &gpll3_out_main.clkr,
 	[GPLL4] = &gpll4_out_main.clkr,
 	[GPLL6] = &gpll6_out_main.clkr,
-	[GCC_APSS_AHB_CLK] = &gcc_apss_ahb_clk.clkr,
-	[GCC_APSS_AXI_CLK] = &gcc_apss_axi_clk.clkr,
-	[GCC_BLSP1_AHB_CLK] = &gcc_blsp1_ahb_clk.clkr,
-	[GCC_BLSP2_AHB_CLK] = &gcc_blsp2_ahb_clk.clkr,
-	[GCC_BOOT_ROM_AHB_CLK] = &gcc_boot_rom_ahb_clk.clkr,
-	[GCC_CRYPTO_AHB_CLK] = &gcc_crypto_ahb_clk.clkr,
-	[GCC_CRYPTO_AXI_CLK] = &gcc_crypto_axi_clk.clkr,
-	[GCC_CRYPTO_CLK] = &gcc_crypto_clk.clkr,
-	[GCC_PRNG_AHB_CLK] = &gcc_prng_ahb_clk.clkr,
-	[GCC_QDSS_DAP_CLK] = &gcc_qdss_dap_clk.clkr,
-	[GCC_APSS_TCU_ASYNC_CLK] = &gcc_apss_tcu_async_clk.clkr,
-	[GCC_CPP_TBU_CLK] = &gcc_cpp_tbu_clk.clkr,
-	[GCC_JPEG_TBU_CLK] = &gcc_jpeg_tbu_clk.clkr,
-	[GCC_MDP_TBU_CLK] = &gcc_mdp_tbu_clk.clkr,
-	[GCC_SMMU_CFG_CLK] = &gcc_smmu_cfg_clk.clkr,
-	[GCC_VENUS_TBU_CLK] = &gcc_venus_tbu_clk.clkr,
-	[GCC_VFE0_TBU_CLK] = &gcc_vfe0_tbu_clk.clkr,
-	[GCC_VFE1_TBU_CLK] = &gcc_vfe1_tbu_clk.clkr,
-	[CAMSS_TOP_AHB_CLK_SRC] = &camss_top_ahb_clk_src.clkr,
-	[CSI0_CLK_SRC] = &csi0_clk_src.clkr,
-	[APSS_AHB_CLK_SRC] = &apss_ahb_clk_src.clkr,
-	[CSI1_CLK_SRC] = &csi1_clk_src.clkr,
-	[CSI2_CLK_SRC] = &csi2_clk_src.clkr,
-	[VFE0_CLK_SRC] = &vfe0_clk_src.clkr,
-	[VCODEC0_CLK_SRC] = &vcodec0_clk_src.clkr,
-	[CPP_CLK_SRC] = &cpp_clk_src.clkr,
-	[JPEG0_CLK_SRC] = &jpeg0_clk_src.clkr,
-	[VFE1_CLK_SRC] = &vfe1_clk_src.clkr,
 	[APC0_DROOP_DETECTOR_CLK_SRC] = &apc0_droop_detector_clk_src.clkr,
 	[APC1_DROOP_DETECTOR_CLK_SRC] = &apc1_droop_detector_clk_src.clkr,
+	[APSS_AHB_CLK_SRC] = &apss_ahb_clk_src.clkr,
 	[BLSP1_QUP1_I2C_APPS_CLK_SRC] = &blsp1_qup1_i2c_apps_clk_src.clkr,
 	[BLSP1_QUP1_SPI_APPS_CLK_SRC] = &blsp1_qup1_spi_apps_clk_src.clkr,
 	[BLSP1_QUP2_I2C_APPS_CLK_SRC] = &blsp1_qup2_i2c_apps_clk_src.clkr,
@@ -3857,31 +3906,56 @@ static struct clk_regmap *gcc_msm8976_clocks[] = {
 	[BLSP2_QUP4_SPI_APPS_CLK_SRC] = &blsp2_qup4_spi_apps_clk_src.clkr,
 	[BLSP2_UART1_APPS_CLK_SRC] = &blsp2_uart1_apps_clk_src.clkr,
 	[BLSP2_UART2_APPS_CLK_SRC] = &blsp2_uart2_apps_clk_src.clkr,
-	[CCI_CLK_SRC] = &cci_clk_src.clkr,
-	[CSI0P_CLK_SRC] = &csi0p_clk_src.clkr,
-	[CSI1P_CLK_SRC] = &csi1p_clk_src.clkr,
-	[CSI2P_CLK_SRC] = &csi2p_clk_src.clkr,
+	[BYTE0_CLK_SRC] = &byte0_clk_src.clkr,
+	[BYTE1_CLK_SRC] = &byte1_clk_src.clkr,
 	[CAMSS_GP0_CLK_SRC] = &camss_gp0_clk_src.clkr,
 	[CAMSS_GP1_CLK_SRC] = &camss_gp1_clk_src.clkr,
-	[MCLK0_CLK_SRC] = &mclk0_clk_src.clkr,
-	[MCLK1_CLK_SRC] = &mclk1_clk_src.clkr,
-	[MCLK2_CLK_SRC] = &mclk2_clk_src.clkr,
-	[CSI0PHYTIMER_CLK_SRC] = &csi0phytimer_clk_src.clkr,
-	[CSI1PHYTIMER_CLK_SRC] = &csi1phytimer_clk_src.clkr,
-	[CSI2PHYTIMER_CLK_SRC] = &csi2phytimer_clk_src.clkr,
+	[CAMSS_TOP_AHB_CLK_SRC] = &camss_top_ahb_clk_src.clkr,
+	[CCI_CLK_SRC] = &cci_clk_src.clkr,
+	[CPP_CLK_SRC] = &cpp_clk_src.clkr,
 	[CRYPTO_CLK_SRC] = &crypto_clk_src.clkr,
+	[CSI0_CLK_SRC] = &csi0_clk_src.clkr,
+	[CSI0P_CLK_SRC] = &csi0p_clk_src.clkr,
+	[CSI0PHYTIMER_CLK_SRC] = &csi0phytimer_clk_src.clkr,
+	[CSI1_CLK_SRC] = &csi1_clk_src.clkr,
+	[CSI1P_CLK_SRC] = &csi1p_clk_src.clkr,
+	[CSI1PHYTIMER_CLK_SRC] = &csi1phytimer_clk_src.clkr,
+	[CSI2_CLK_SRC] = &csi2_clk_src.clkr,
+	[CSI2P_CLK_SRC] = &csi2p_clk_src.clkr,
+	[CSI2PHYTIMER_CLK_SRC] = &csi2phytimer_clk_src.clkr,
+	[ESC0_CLK_SRC] = &esc0_clk_src.clkr,
+	[ESC1_CLK_SRC] = &esc1_clk_src.clkr,
+	[GFX3D_CLK_SRC] = &gfx3d_clk_src.clkr,
 	[GP1_CLK_SRC] = &gp1_clk_src.clkr,
 	[GP2_CLK_SRC] = &gp2_clk_src.clkr,
 	[GP3_CLK_SRC] = &gp3_clk_src.clkr,
+	[JPEG0_CLK_SRC] = &jpeg0_clk_src.clkr,
+	[MCLK0_CLK_SRC] = &mclk0_clk_src.clkr,
+	[MCLK1_CLK_SRC] = &mclk1_clk_src.clkr,
+	[MCLK2_CLK_SRC] = &mclk2_clk_src.clkr,
+	[MDP_CLK_SRC] = &mdp_clk_src.clkr,
+	[PCLK0_CLK_SRC] = &pclk0_clk_src.clkr,
+	[PCLK1_CLK_SRC] = &pclk1_clk_src.clkr,
 	[PDM2_CLK_SRC] = &pdm2_clk_src.clkr,
 	[RBCPR_GFX_CLK_SRC] = &rbcpr_gfx_clk_src.clkr,
 	[SDCC1_APPS_CLK_SRC] = &sdcc1_apps_clk_src.clkr,
 	[SDCC1_ICE_CORE_CLK_SRC] = &sdcc1_ice_core_clk_src.clkr,
 	[SDCC2_APPS_CLK_SRC] = &sdcc2_apps_clk_src.clkr,
 	[SDCC3_APPS_CLK_SRC] = &sdcc3_apps_clk_src.clkr,
-	[USB_HS_SYSTEM_CLK_SRC] = &usb_hs_system_clk_src.clkr,
+	[USB30_MASTER_CLK_SRC] = &usb30_master_clk_src.clkr,
+	[USB30_MOCK_UTMI_CLK_SRC] = &usb30_mock_utmi_clk_src.clkr,
+	[VCODEC0_CLK_SRC] = &vcodec0_clk_src.clkr,
+	[VFE0_CLK_SRC] = &vfe0_clk_src.clkr,
+	[VFE1_CLK_SRC] = &vfe1_clk_src.clkr,
+	[VSYNC_CLK_SRC] = &vsync_clk_src.clkr,
 	[GCC_APC0_DROOP_DETECTOR_GPLL0_CLK] = &gcc_apc0_droop_detector_gpll0_clk.clkr,
 	[GCC_APC1_DROOP_DETECTOR_GPLL0_CLK] = &gcc_apc1_droop_detector_gpll0_clk.clkr,
+	[GCC_APSS_AHB_CLK] = &gcc_apss_ahb_clk.clkr,
+	[GCC_APSS_AXI_CLK] = &gcc_apss_axi_clk.clkr,
+	[GCC_APSS_TCU_ASYNC_CLK] = &gcc_apss_tcu_async_clk.clkr,
+	[GCC_BIMC_GFX_CLK] = &gcc_bimc_gfx_clk.clkr,
+	[GCC_BIMC_GPU_CLK] = &gcc_bimc_gpu_clk.clkr,
+	[GCC_BLSP1_AHB_CLK] = &gcc_blsp1_ahb_clk.clkr,
 	[GCC_BLSP1_QUP1_I2C_APPS_CLK] = &gcc_blsp1_qup1_i2c_apps_clk.clkr,
 	[GCC_BLSP1_QUP1_SPI_APPS_CLK] = &gcc_blsp1_qup1_spi_apps_clk.clkr,
 	[GCC_BLSP1_QUP2_I2C_APPS_CLK] = &gcc_blsp1_qup2_i2c_apps_clk.clkr,
@@ -3892,6 +3966,7 @@ static struct clk_regmap *gcc_msm8976_clocks[] = {
 	[GCC_BLSP1_QUP4_SPI_APPS_CLK] = &gcc_blsp1_qup4_spi_apps_clk.clkr,
 	[GCC_BLSP1_UART1_APPS_CLK] = &gcc_blsp1_uart1_apps_clk.clkr,
 	[GCC_BLSP1_UART2_APPS_CLK] = &gcc_blsp1_uart2_apps_clk.clkr,
+	[GCC_BLSP2_AHB_CLK] = &gcc_blsp2_ahb_clk.clkr,
 	[GCC_BLSP2_QUP1_I2C_APPS_CLK] = &gcc_blsp2_qup1_i2c_apps_clk.clkr,
 	[GCC_BLSP2_QUP1_SPI_APPS_CLK] = &gcc_blsp2_qup1_spi_apps_clk.clkr,
 	[GCC_BLSP2_QUP2_I2C_APPS_CLK] = &gcc_blsp2_qup2_i2c_apps_clk.clkr,
@@ -3902,6 +3977,8 @@ static struct clk_regmap *gcc_msm8976_clocks[] = {
 	[GCC_BLSP2_QUP4_SPI_APPS_CLK] = &gcc_blsp2_qup4_spi_apps_clk.clkr,
 	[GCC_BLSP2_UART1_APPS_CLK] = &gcc_blsp2_uart1_apps_clk.clkr,
 	[GCC_BLSP2_UART2_APPS_CLK] = &gcc_blsp2_uart2_apps_clk.clkr,
+	[GCC_BOOT_ROM_AHB_CLK] = &gcc_boot_rom_ahb_clk.clkr,
+	[GCC_CAMSS_AHB_CLK] = &gcc_camss_ahb_clk.clkr,
 	[GCC_CAMSS_CCI_AHB_CLK] = &gcc_camss_cci_ahb_clk.clkr,
 	[GCC_CAMSS_CCI_CLK] = &gcc_camss_cci_clk.clkr,
 	[GCC_CAMSS_CPP_AHB_CLK] = &gcc_camss_cpp_ahb_clk.clkr,
@@ -3911,18 +3988,21 @@ static struct clk_regmap *gcc_msm8976_clocks[] = {
 	[GCC_CAMSS_CSI0_CLK] = &gcc_camss_csi0_clk.clkr,
 	[GCC_CAMSS_CSI0_CSIPHY_3P_CLK] = &gcc_camss_csi0_csiphy_3p_clk.clkr,
 	[GCC_CAMSS_CSI0PHY_CLK] = &gcc_camss_csi0phy_clk.clkr,
+	[GCC_CAMSS_CSI0PHYTIMER_CLK] = &gcc_camss_csi0phytimer_clk.clkr,
 	[GCC_CAMSS_CSI0PIX_CLK] = &gcc_camss_csi0pix_clk.clkr,
 	[GCC_CAMSS_CSI0RDI_CLK] = &gcc_camss_csi0rdi_clk.clkr,
 	[GCC_CAMSS_CSI1_AHB_CLK] = &gcc_camss_csi1_ahb_clk.clkr,
 	[GCC_CAMSS_CSI1_CLK] = &gcc_camss_csi1_clk.clkr,
 	[GCC_CAMSS_CSI1_CSIPHY_3P_CLK] = &gcc_camss_csi1_csiphy_3p_clk.clkr,
 	[GCC_CAMSS_CSI1PHY_CLK] = &gcc_camss_csi1phy_clk.clkr,
+	[GCC_CAMSS_CSI1PHYTIMER_CLK] = &gcc_camss_csi1phytimer_clk.clkr,
 	[GCC_CAMSS_CSI1PIX_CLK] = &gcc_camss_csi1pix_clk.clkr,
 	[GCC_CAMSS_CSI1RDI_CLK] = &gcc_camss_csi1rdi_clk.clkr,
 	[GCC_CAMSS_CSI2_AHB_CLK] = &gcc_camss_csi2_ahb_clk.clkr,
 	[GCC_CAMSS_CSI2_CLK] = &gcc_camss_csi2_clk.clkr,
 	[GCC_CAMSS_CSI2_CSIPHY_3P_CLK] = &gcc_camss_csi2_csiphy_3p_clk.clkr,
 	[GCC_CAMSS_CSI2PHY_CLK] = &gcc_camss_csi2phy_clk.clkr,
+	[GCC_CAMSS_CSI2PHYTIMER_CLK] = &gcc_camss_csi2phytimer_clk.clkr,
 	[GCC_CAMSS_CSI2PIX_CLK] = &gcc_camss_csi2pix_clk.clkr,
 	[GCC_CAMSS_CSI2RDI_CLK] = &gcc_camss_csi2rdi_clk.clkr,
 	[GCC_CAMSS_CSI_VFE0_CLK] = &gcc_camss_csi_vfe0_clk.clkr,
@@ -3937,25 +4017,45 @@ static struct clk_regmap *gcc_msm8976_clocks[] = {
 	[GCC_CAMSS_MCLK1_CLK] = &gcc_camss_mclk1_clk.clkr,
 	[GCC_CAMSS_MCLK2_CLK] = &gcc_camss_mclk2_clk.clkr,
 	[GCC_CAMSS_MICRO_AHB_CLK] = &gcc_camss_micro_ahb_clk.clkr,
-	[GCC_CAMSS_CSI0PHYTIMER_CLK] = &gcc_camss_csi0phytimer_clk.clkr,
-	[GCC_CAMSS_CSI1PHYTIMER_CLK] = &gcc_camss_csi1phytimer_clk.clkr,
-	[GCC_CAMSS_CSI2PHYTIMER_CLK] = &gcc_camss_csi2phytimer_clk.clkr,
-	[GCC_CAMSS_AHB_CLK] = &gcc_camss_ahb_clk.clkr,
 	[GCC_CAMSS_TOP_AHB_CLK] = &gcc_camss_top_ahb_clk.clkr,
-	[GCC_CAMSS_VFE0_CLK] = &gcc_camss_vfe0_clk.clkr,
 	[GCC_CAMSS_VFE0_AHB_CLK] = &gcc_camss_vfe0_ahb_clk.clkr,
 	[GCC_CAMSS_VFE0_AXI_CLK] = &gcc_camss_vfe0_axi_clk.clkr,
+	[GCC_CAMSS_VFE0_CLK] = &gcc_camss_vfe0_clk.clkr,
 	[GCC_CAMSS_VFE1_AHB_CLK] = &gcc_camss_vfe1_ahb_clk.clkr,
 	[GCC_CAMSS_VFE1_AXI_CLK] = &gcc_camss_vfe1_axi_clk.clkr,
 	[GCC_CAMSS_VFE1_CLK] = &gcc_camss_vfe1_clk.clkr,
+	[GCC_CPP_TBU_CLK] = &gcc_cpp_tbu_clk.clkr,
+	[GCC_CRYPTO_AHB_CLK] = &gcc_crypto_ahb_clk.clkr,
+	[GCC_CRYPTO_AXI_CLK] = &gcc_crypto_axi_clk.clkr,
+	[GCC_CRYPTO_CLK] = &gcc_crypto_clk.clkr,
 	[GCC_DCC_CLK] = &gcc_dcc_clk.clkr,
 	[GCC_GP1_CLK] = &gcc_gp1_clk.clkr,
 	[GCC_GP2_CLK] = &gcc_gp2_clk.clkr,
 	[GCC_GP3_CLK] = &gcc_gp3_clk.clkr,
+	[GCC_JPEG_TBU_CLK] = &gcc_jpeg_tbu_clk.clkr,
+	[GCC_MDP_TBU_CLK] = &gcc_mdp_tbu_clk.clkr,
+	[GCC_MDSS_AHB_CLK] = &gcc_mdss_ahb_clk.clkr,
+	[GCC_MDSS_AXI_CLK] = &gcc_mdss_axi_clk.clkr,
+	[GCC_MDSS_BYTE0_CLK] = &gcc_mdss_byte0_clk.clkr,
+	[GCC_MDSS_BYTE1_CLK] = &gcc_mdss_byte1_clk.clkr,
+	[GCC_MDSS_ESC0_CLK] = &gcc_mdss_esc0_clk.clkr,
+	[GCC_MDSS_ESC1_CLK] = &gcc_mdss_esc1_clk.clkr,
+	[GCC_MDSS_MDP_CLK] = &gcc_mdss_mdp_clk.clkr,
+	[GCC_MDSS_PCLK0_CLK] = &gcc_mdss_pclk0_clk.clkr,
+	[GCC_MDSS_PCLK1_CLK] = &gcc_mdss_pclk1_clk.clkr,
+	[GCC_MDSS_VSYNC_CLK] = &gcc_mdss_vsync_clk.clkr,
 	[GCC_MSS_CFG_AHB_CLK] = &gcc_mss_cfg_ahb_clk.clkr,
 	[GCC_MSS_Q6_BIMC_AXI_CLK] = &gcc_mss_q6_bimc_axi_clk.clkr,
+	[GCC_OXILI_AHB_CLK] = &gcc_oxili_ahb_clk.clkr,
+	[GCC_OXILI_AON_CLK] = &gcc_oxili_aon_clk.clkr,
+	[GCC_OXILI_GFX3D_CLK] = &gcc_oxili_gfx3d_clk.clkr,
+	[GCC_OXILI_GMEM_CLK] = &gcc_oxili_gmem_clk.clkr,
+	[GCC_OXILI_TIMER_CLK] = &gcc_oxili_timer_clk.clkr,
+	[GCC_PCNOC_USB3_AXI_CLK] = &gcc_pcnoc_usb3_axi_clk.clkr,
 	[GCC_PDM2_CLK] = &gcc_pdm2_clk.clkr,
 	[GCC_PDM_AHB_CLK] = &gcc_pdm_ahb_clk.clkr,
+	[GCC_PRNG_AHB_CLK] = &gcc_prng_ahb_clk.clkr,
+	[GCC_QDSS_DAP_CLK] = &gcc_qdss_dap_clk.clkr,
 	[GCC_RBCPR_GFX_CLK] = &gcc_rbcpr_gfx_clk.clkr,
 	[GCC_SDCC1_AHB_CLK] = &gcc_sdcc1_ahb_clk.clkr,
 	[GCC_SDCC1_APPS_CLK] = &gcc_sdcc1_apps_clk.clkr,
@@ -3964,49 +4064,27 @@ static struct clk_regmap *gcc_msm8976_clocks[] = {
 	[GCC_SDCC2_APPS_CLK] = &gcc_sdcc2_apps_clk.clkr,
 	[GCC_SDCC3_AHB_CLK] = &gcc_sdcc3_ahb_clk.clkr,
 	[GCC_SDCC3_APPS_CLK] = &gcc_sdcc3_apps_clk.clkr,
-	[GCC_USB2A_PHY_SLEEP_CLK] = &gcc_usb2a_phy_sleep_clk.clkr,
-	[GCC_USB_HS_AHB_CLK] = &gcc_usb_hs_ahb_clk.clkr,
-	[GCC_USB_HS_PHY_CFG_AHB_CLK] = &gcc_usb_hs_phy_cfg_ahb_clk.clkr,
-	[GCC_USB_HS_SYSTEM_CLK] = &gcc_usb_hs_system_clk.clkr,
+	[GCC_SMMU_CFG_CLK] = &gcc_smmu_cfg_clk.clkr,
+	[GCC_USB30_MASTER_CLK] = &gcc_usb30_master_clk.clkr,
+	[GCC_USB30_MOCK_UTMI_CLK] = &gcc_usb30_mock_utmi_clk.clkr,
+	[GCC_USB30_SLEEP_CLK] = &gcc_usb30_sleep_clk.clkr,
+	[GCC_USB3_PIPE_CLK] = &gcc_usb3_pipe_clk.clkr,
+	[GCC_USB_PHY_CFG_AHB_CLK] = &gcc_usb_phy_cfg_ahb_clk.clkr,
 	[GCC_VENUS0_AHB_CLK] = &gcc_venus0_ahb_clk.clkr,
 	[GCC_VENUS0_AXI_CLK] = &gcc_venus0_axi_clk.clkr,
 	[GCC_VENUS0_CORE0_VCODEC0_CLK] = &gcc_venus0_core0_vcodec0_clk.clkr,
 	[GCC_VENUS0_CORE1_VCODEC0_CLK] = &gcc_venus0_core1_vcodec0_clk.clkr,
 	[GCC_VENUS0_VCODEC0_CLK] = &gcc_venus0_vcodec0_clk.clkr,
-	[MDP_CLK_SRC] = &mdp_clk_src.clkr,
-	[PCLK0_CLK_SRC] = &pclk0_clk_src.clkr,
-	[BYTE0_CLK_SRC] = &byte0_clk_src.clkr,
-	[ESC0_CLK_SRC] = &esc0_clk_src.clkr,
-	[PCLK1_CLK_SRC] = &pclk1_clk_src.clkr,
-	[BYTE1_CLK_SRC] = &byte1_clk_src.clkr,
-	[ESC1_CLK_SRC] = &esc1_clk_src.clkr,
-	[VSYNC_CLK_SRC] = &vsync_clk_src.clkr,
-	[GCC_MDSS_AHB_CLK] = &gcc_mdss_ahb_clk.clkr,
-	[GCC_MDSS_AXI_CLK] = &gcc_mdss_axi_clk.clkr,
-	[GCC_MDSS_PCLK0_CLK] = &gcc_mdss_pclk0_clk.clkr,
-	[GCC_MDSS_BYTE0_CLK] = &gcc_mdss_byte0_clk.clkr,
-	[GCC_MDSS_ESC0_CLK] = &gcc_mdss_esc0_clk.clkr,
-	[GCC_MDSS_PCLK1_CLK] = &gcc_mdss_pclk1_clk.clkr,
-	[GCC_MDSS_BYTE1_CLK] = &gcc_mdss_byte1_clk.clkr,
-	[GCC_MDSS_ESC1_CLK] = &gcc_mdss_esc1_clk.clkr,
-	[GCC_MDSS_MDP_CLK] = &gcc_mdss_mdp_clk.clkr,
-	[GCC_MDSS_VSYNC_CLK] = &gcc_mdss_vsync_clk.clkr,
-	[GCC_OXILI_TIMER_CLK] = &gcc_oxili_timer_clk.clkr,
-	[GCC_OXILI_GFX3D_CLK] = &gcc_oxili_gfx3d_clk.clkr,
-	[GCC_OXILI_GMEM_CLK] = &gcc_oxili_gmem_clk.clkr,
-	[GCC_OXILI_AON_CLK] = &gcc_oxili_aon_clk.clkr,
-	[GCC_OXILI_AHB_CLK] = &gcc_oxili_ahb_clk.clkr,
-	[GCC_BIMC_GFX_CLK] = &gcc_bimc_gfx_clk.clkr,
-	[GCC_BIMC_GPU_CLK] = &gcc_bimc_gpu_clk.clkr,
-	[GFX3D_CLK_SRC] = &gfx3d_clk_src.clkr,
+	[GCC_VENUS_TBU_CLK] = &gcc_venus_tbu_clk.clkr,
+	[GCC_VFE0_TBU_CLK] = &gcc_vfe0_tbu_clk.clkr,
+	[GCC_VFE1_TBU_CLK] = &gcc_vfe1_tbu_clk.clkr,
 };
 
 static const struct qcom_reset_map gcc_msm8976_resets[] = {
 	[GCC_CAMSS_MICRO_BCR]	= { 0x56008 },
 	[GCC_MSS_BCR]		= { 0x71000 },
-	[GCC_QUSB2_PHY_BCR]		= { 0x4103c },
-	[GCC_USB_HS_BCR]		= { 0x41000 },
-	[GCC_USB2_HS_PHY_ONLY_BCR]	= { 0x41034 },
+	[GCC_QUSB2_PHY_BCR]	= { 0x4103c },
+	[GCC_USB_30_BCR]	= { 0x3f070 },
 };
 
 static const struct regmap_config gcc_msm8976_regmap_config = {
@@ -4023,6 +4101,7 @@ static struct gdsc *gcc_msm8976_gdscs[] = {
 	[MDSS_GDSC] = &mdss_gdsc,
 	[OXILI_CX_GDSC] = &oxili_cx_gdsc,
 	[OXILI_GX_GDSC] = &oxili_gx_gdsc,
+	[USB30_GDSC] = &usb30_gdsc,
 	[VENUS_CORE0_GDSC] = &venus_core0_gdsc,
 	[VENUS_CORE1_GDSC] = &venus_core1_gdsc,
 	[VENUS_GDSC] = &venus_gdsc,

@@ -267,7 +267,3 @@
 	pinctrl-5 = <&qdsd_clk_spmi &qdsd_cmd_spmi
 		     &qdsd_data0_spmi &qdsd_data3_spmi>;
 };
-
-&usb_otg {
-	qcom,usbid-switch = <&tlmm 17 0>;
-};

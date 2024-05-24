@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-2.0
 // Copyright (c) 2015, The Linux Foundation. All rights reserved.
-// Copyright (c) 2023, Benarji Anand <benarji385@gmail.com>
+// Copyright (c) 2023-2024, Benarji Anand <benarji385@gmail.com>
 
 #include <dt-bindings/msm/msm-bus-ids.h>
 
@@ -148,14 +148,23 @@
 		};
 
 		/*PCNOC Masters*/
-		mas_usb_hs2: mas-usb-hs2 {
-			cell-id = <MSM_BUS_MASTER_USB_HS2>;
-			label = "mas-usb-hs2";
-			qcom,buswidth = <4>;
+		mas_usb3: mas-usb3 {
+			cell-id = <MSM_BUS_MASTER_USB3>;
+			label = "mas-usb3";
+			qcom,buswidth = <8>;
 			qcom,agg-ports = <1>;
-			qcom,connections = <&pcnoc_m_0>;
+			qcom,qport = <0>;
+			qcom,connections = <&pcnoc_int_1>;
 			qcom,bus-dev = <&fab_pcnoc>;
-			qcom,mas-rpm-id = <ICBID_MASTER_USB_HS2>;
+			qcom,ap-owned;
+			qcom,prio0 = <1>;
+			qcom,prio1 = <1>;
+			qcom,node-qos-clks {
+				clocks =
+				<&clock_gcc GCC_PCNOC_USB3_AXI_CLK>;
+				clock-names =
+				"clk-usb3-axi-no-rate";
+			};
 		};
 
 		mas_blsp_1: mas-blsp-1 {
@@ -166,16 +175,6 @@
 			qcom,connections = <&pcnoc_m_1>;
 			qcom,bus-dev = <&fab_pcnoc>;
 			qcom,mas-rpm-id = <ICBID_MASTER_BLSP_1>;
-		};
-
-		mas_usb_hs1: mas-usb-hs1 {
-			cell-id = <MSM_BUS_MASTER_USB_HS>;
-			label = "mas-usb-hs1";
-			qcom,buswidth = <4>;
-			qcom,agg-ports = <1>;
-			qcom,connections = <&pcnoc_m_1>;
-			qcom,bus-dev = <&fab_pcnoc>;
-			qcom,mas-rpm-id = <ICBID_MASTER_USB_HS1>;
 		};
 
 		mas_blsp_2: mas-blsp-2 {
@@ -606,7 +605,7 @@
 			label = "pcnoc-s-8";
 			qcom,buswidth = <4>;
 			qcom,agg-ports = <1>;
-			qcom,connections = <&slv_usb_hs &slv_sdcc_3 &slv_blsp_1
+			qcom,connections = <&slv_usb3 &slv_sdcc_3 &slv_blsp_1
 				&slv_sdcc_1>;
 			qcom,bus-dev = <&fab_pcnoc>;
 			qcom,mas-rpm-id = <ICBID_MASTER_PCNOC_S_8>;
@@ -618,7 +617,7 @@
 			label = "pcnoc-s-9";
 			qcom,buswidth = <4>;
 			qcom,agg-ports = <1>;
-			qcom,connections = <&slv_gpu_cfg &slv_usb_hs2 &slv_sdcc_2
+			qcom,connections = <&slv_gpu_cfg &slv_sdcc_2
 				 &slv_blsp_2>;
 			qcom,bus-dev = <&fab_pcnoc>;
 			qcom,mas-rpm-id = <ICBID_MASTER_PCNOC_S_9>;
@@ -772,6 +771,15 @@
 			qcom,slv-rpm-id = <ICBID_SLAVE_PMIC_ARB>;
 		};
 
+                slv_usb3:slv-usb3 {
+                        cell-id = <MSM_BUS_SLAVE_USB3>;
+                        label = "slv-usb3";
+                        qcom,buswidth = <4>;
+                        qcom,agg-ports = <1>;
+                        qcom,bus-dev = <&fab_pcnoc>;
+                        qcom,slv-rpm-id = <ICBID_SLAVE_USB3_0>;
+                };
+
 		slv_snoc_cfg:slv-snoc-cfg {
 			cell-id = <MSM_BUS_SLAVE_SNOC_CFG>;
 			label = "slv-snoc-cfg";
@@ -839,15 +847,6 @@
 			qcom,slv-rpm-id = <ICBID_SLAVE_BLSP_1>;
 		};
 
-		slv_usb_hs:slv-usb-hs {
-			cell-id = <MSM_BUS_SLAVE_USB_HS>;
-			label = "slv-usb-hs";
-			qcom,buswidth = <4>;
-			qcom,agg-ports = <1>;
-			qcom,bus-dev = <&fab_pcnoc>;
-			qcom,slv-rpm-id = <ICBID_SLAVE_USB_HS>;
-		};
-
 		slv_sdcc_3:slv-sdcc-3 {
 			cell-id = <MSM_BUS_SLAVE_SDCC_3>;
 			label = "slv-sdcc-3";
@@ -874,15 +873,6 @@
 			qcom,ap-owned;
 			qcom,bus-dev = <&fab_pcnoc>;
 			qcom,slv-rpm-id = <ICBID_SLAVE_GFX3D_CFG>;
-		};
-
-		slv_usb_hs2:slv-usb-hs2 {
-			cell-id = <MSM_BUS_SLAVE_USB_HS2>;
-			label = "slv-usb-hs2";
-			qcom,buswidth = <4>;
-			qcom,agg-ports = <1>;
-			qcom,bus-dev = <&fab_pcnoc>;
-			qcom,slv-rpm-id = <ICBID_SLAVE_USB_HS2>;
 		};
 
 		slv_blsp_2:slv-blsp-2 {

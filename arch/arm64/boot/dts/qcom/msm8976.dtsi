@@ -1021,54 +1021,138 @@
 		status = "disabled";
 	};
 
-	usb_otg: usb@78db000 {
-		compatible = "qcom,hsusb-otg";
-		reg = <0x78db000 0x400>, <0x6c000 0x200>;
-		reg-names = "core", "phy_csr";
+	/* USB port related controller */
+	usb0: ssusb@a600000 {
+		compatible = "qcom,dwc-usb3-msm";
+		reg = <0x0a600000 0x100000>;
+		reg-names = "core_base";
 
-		interrupts = <0 134 0>, <0 140 0>;
-		interrupt-names = "core_irq", "async_irq";
+		#address-cells = <1>;
+		#size-cells = <1>;
+		ranges;
 
-		hsusb_vdd_dig-supply = <&pm8950_s6_level>;
-		HSUSB_1p8-supply = <&pm8950_l7>;
-		HSUSB_3p3-supply = <&pm8950_l13>;
-		vbus_otg-supply = <&smbcharger_charger_otg>;
-		qcom,vdd-voltage-level = <RPM_SMD_REGULATOR_LEVEL_NONE
-					RPM_SMD_REGULATOR_LEVEL_NOM
-					RPM_SMD_REGULATOR_LEVEL_BINNING>;
+		interrupts = <&intc GIC_SPI 134 IRQ_TYPE_LEVEL_HIGH>,
+			     <&wakegic 220 IRQ_TYPE_LEVEL_HIGH>,
+			     <&wakegic 136 IRQ_TYPE_EDGE_RISING>;
+		interrupt-names = "pwr_event_irq","ss_phy_irq",
+					"hs_phy_irq";
 
-		qcom,hsusb-otg-phy-init-seq =
-			<0x73 0x80 0x38 0x81 0x1b 0x82 0xffffffff>;
-		qcom,hsusb-otg-phy-type = <3>; /* SNPS Femto PHY */
-		qcom,hsusb-otg-mode = <3>; /* OTG */
-		qcom,hsusb-otg-otg-control = <2>; /* PMIC */
-		qcom,dp-manual-pullup;
-		qcom,hsusb-otg-mpm-dpsehv-int = <49>;
-		qcom,hsusb-otg-mpm-dmsehv-int = <58>;
-		qcom,boost-sysclk-with-streaming;
-		qcom,axi-prefetch-enable;
+		USB3_GDSC-supply = <&gdsc_usb30>;
+		dpdm-supply = <&usb2_phy0>;
+		clocks = <&xo_board>,
+			<&clock_gcc GCC_USB30_MASTER_CLK>,
+			<&clock_gcc GCC_PCNOC_USB3_AXI_CLK>,
+			<&clock_gcc GCC_USB30_MOCK_UTMI_CLK>,
+			<&clock_gcc GCC_USB30_SLEEP_CLK>;
+		clock-names = "xo", "core_clk", "iface_clk",
+				"utmi_clk", "sleep_clk";
 
-		qcom,msm-bus,name = "usb2";
-		qcom,msm-bus,num-cases = <3>;
-		qcom,msm-bus,num-paths = <1>;
+		resets = <&clock_gcc GCC_USB_30_BCR>;
+		reset-names = "core_reset";
+
+		qcom,core-clk-rate = <200000000>;
+		qcom,core-clk-rate-hs = <66666667>;
+		qcom,num-gsi-evt-buffs = <0x3>;
+		qcom,gsi-reg-offset =
+			<0x0fc /* GSI_GENERAL_CFG */
+			0x110 /* GSI_DBL_ADDR_L */
+			0x120 /* GSI_DBL_ADDR_H */
+			0x130 /* GSI_RING_BASE_ADDR_L */
+			0x144 /* GSI_RING_BASE_ADDR_H */
+			0x1a4>; /* GSI_IF_STS */
+		qcom,dwc-usb3-msm-tx-fifo-size = <27696>;
+
+		qcom,msm-bus,name = "usb0";
+		qcom,msm-bus,num-cases = <4>;
+		qcom,msm-bus,num-paths = <3>;
 		qcom,msm-bus,vectors-KBps =
-				<87 512 0 0>,
-				<87 512 60000 0>,
-				<87 512 6000  6000>;
+			/*  suspend vote */
+			<MSM_BUS_MASTER_USB3 MSM_BUS_SLAVE_EBI_CH0 0 0>,
+			<MSM_BUS_MASTER_USB3 MSM_BUS_SLAVE_IPA_CFG 0 0>,
+			<MSM_BUS_MASTER_AMPSS_M0 MSM_BUS_SLAVE_USB3 0 0>,
 
-		clocks = <&clock_gcc GCC_USB_HS_AHB_CLK>,
-			 <&clock_gcc GCC_USB_HS_SYSTEM_CLK>,
-			 <&clock_gcc GCC_USB2A_PHY_SLEEP_CLK>,
-			 <&xo_board>;
-		clock-names = "iface_clk", "core_clk", "sleep_clk", "xo";
-		qcom,bus-clk-rate = <320000000 200000000 100000000>;
-		qcom,max-nominal-sysclk-rate = <133330000>;
+			/*  nominal vote */
+			<MSM_BUS_MASTER_USB3
+				MSM_BUS_SLAVE_EBI_CH0 1000000 2500000>,
+			<MSM_BUS_MASTER_USB3 MSM_BUS_SLAVE_IPA_CFG 0 2400>,
+			<MSM_BUS_MASTER_AMPSS_M0 MSM_BUS_SLAVE_USB3 0 40000>,
+
+			/*  svs vote */
+			<MSM_BUS_MASTER_USB3
+				MSM_BUS_SLAVE_EBI_CH0 240000 700000>,
+			<MSM_BUS_MASTER_USB3 MSM_BUS_SLAVE_IPA_CFG 0 2400>,
+			<MSM_BUS_MASTER_AMPSS_M0 MSM_BUS_SLAVE_USB3 0 40000>,
+
+			/*  min vote */
+			<MSM_BUS_MASTER_USB3 MSM_BUS_SLAVE_EBI_CH0 1 1>,
+			<MSM_BUS_MASTER_USB3 MSM_BUS_SLAVE_IPA_CFG 1 1>,
+			<MSM_BUS_MASTER_AMPSS_M0 MSM_BUS_SLAVE_USB3 1 1>;
+
+		dwc3@a600000 {
+			compatible = "snps,dwc3";
+			reg = <0x0a600000 0xd93c>;
+			interrupts = <GIC_SPI 133 IRQ_TYPE_LEVEL_HIGH>;
+			usb-phy = <&usb2_phy0>;
+			linux,sysdev_is_parent;
+			snps,disable-clk-gating;
+			snps,has-lpm-erratum;
+			snps,hird-threshold = /bits/ 8 <0x10>;
+			snps,usb3-u1u2-disable;
+			usb-core-id = <0>;
+			tx-fifo-resize;
+			maximum-speed = "super-speed-plus";
+			dr_mode = "drd";
+		};
+
+		qcom,usbbam@a704000 {
+			compatible = "qcom,usb-bam-msm";
+			reg = <0xa704000 0x17000>;
+			interrupts = <GIC_SPI 132 IRQ_TYPE_LEVEL_HIGH>;
+
+			qcom,usb-bam-fifo-baseaddr = <0x146bb000>;
+			qcom,usb-bam-num-pipes = <4>;
+			qcom,disable-clk-gating;
+			qcom,usb-bam-override-threshold = <0x4001>;
+			qcom,usb-bam-max-mbps-highspeed = <400>;
+			qcom,usb-bam-max-mbps-superspeed = <3600>;
+			qcom,reset-bam-on-connect;
+
+			qcom,pipe0 {
+				label = "ssusb-qdss-in-0";
+				qcom,usb-bam-mem-type = <2>;
+				qcom,dir = <1>;
+				qcom,pipe-num = <0>;
+				qcom,peer-bam = <0>;
+				qcom,peer-bam-physical-address = <0x6064000>;
+				qcom,src-bam-pipe-index = <0>;
+				qcom,dst-bam-pipe-index = <0>;
+				qcom,data-fifo-offset = <0x0>;
+				qcom,data-fifo-size = <0x1800>;
+				qcom,descriptor-fifo-offset = <0x1800>;
+				qcom,descriptor-fifo-size = <0x800>;
+			};
+		};
 	};
 
-	android_usb: android_usb@086000c8 {
-		compatible = "qcom,android-usb";
-		reg = <0x086000c8 0xc8>;
-		qcom,pm-qos-latency = <59 150 10741>;
+	/* USB port related High-Speed PHY */
+	usb2_phy0: hsphy@88e3000 {
+		compatible = "qcom,usb-hsphy-snps-femto";
+		reg = <0x88e3000 0x110>,
+			<0x088e2000 0x4>;
+		reg-names = "hsusb_phy_base",
+			"eud_enable_reg";
+
+		vdd-supply = <&pm8950_l3>;
+		vdda18-supply = <&pm8950_l7>;
+		vdda33-supply = <&pm8950_l13>;
+		qcom,vdd-voltage-level = <0 880000 880000>;
+
+		clocks = <&xo_board>;
+		clock-names = "xo";
+
+		resets = <&clock_gcc GCC_QUSB2_PHY_BCR>;
+		reset-names = "phy_reset";
+		qcom,param-override-seq = <0x43 0x70>;
 	};
 
 	slim_msm: slim@c140000{
@@ -1081,81 +1165,6 @@
 		interrupt-names = "slimbus_irq", "slimbus_bam_irq";
 		qcom,apps-ch-pipes = <0x600000>;
 		qcom,ea-pc = <0x170>;
-	};
-
-	qcom,usbbam@78c4000 {
-		compatible = "qcom,usb-bam-msm";
-		reg = <0x78c4000 0x17000>;
-		reg-names = "hsusb";
-		interrupts = <0 135 0>;
-		interrupt-names = "hsusb";
-		qcom,usb-bam-num-pipes = <16>;
-		qcom,usb-bam-fifo-baseaddr = <0x08606000>;
-		qcom,ignore-core-reset-ack;
-		qcom,disable-clk-gating;
-		qcom,usb-bam-max-mbps-highspeed = <400>;
-		qcom,enable-hsusb-bam-on-boot;
-
-		qcom,pipe0 {
-			label = "hsusb-ipa-out-0";
-			qcom,usb-bam-mem-type = <2>;
-			qcom,bam-type = <1>;
-			qcom,dir = <0>;
-			qcom,pipe-num = <0>;
-			qcom,peer-bam = <2>;
-			qcom,src-bam-physical-address = <0x78c4000>;
-			qcom,src-bam-pipe-index = <1>;
-			qcom,data-fifo-size = <0x8000>;
-			qcom,descriptor-fifo-size = <0x2000>;
-			qcom,reset-bam-on-disconnect;
-		};
-
-		qcom,pipe1 {
-			label = "hsusb-ipa-in-0";
-			qcom,usb-bam-mem-type = <2>;
-			qcom,bam-type = <1>;
-			qcom,dir = <1>;
-			qcom,pipe-num = <0>;
-			qcom,peer-bam = <2>;
-			qcom,dst-bam-physical-address = <0x78c4000>;
-			qcom,dst-bam-pipe-index = <0>;
-			qcom,data-fifo-size = <0x8000>;
-			qcom,descriptor-fifo-size = <0x2000>;
-			qcom,reset-bam-on-disconnect;
-		};
-
-		qcom,pipe2 {
-			label = "hsusb-qdss-in-0";
-			qcom,usb-bam-mem-type = <3>;
-			qcom,bam-type = <1>;
-			qcom,dir = <1>;
-			qcom,pipe-num = <0>;
-			qcom,peer-bam = <1>;
-			qcom,src-bam-physical-address = <0x6084000>;
-			qcom,src-bam-pipe-index = <0>;
-			qcom,dst-bam-physical-address = <0x78c4000>;
-			qcom,dst-bam-pipe-index = <2>;
-			qcom,data-fifo-offset = <0x0>;
-			qcom,data-fifo-size = <0xe00>;
-			qcom,descriptor-fifo-offset = <0xe00>;
-			qcom,descriptor-fifo-size = <0x200>;
-			qcom,reset-bam-on-disconnect;
-		};
-
-		/* USB BAM pipe (consumer) configuration for accelerated DPL */
-		qcom,pipe3 {
-			label = "hsusb-dpl-ipa-in-1";
-			qcom,usb-bam-mem-type = <2>;
-			qcom,bam-type = <1>;
-			qcom,dir = <1>;
-			qcom,pipe-num = <1>;
-			qcom,peer-bam = <2>;
-			qcom,dst-bam-physical-address = <0x78c4000>;
-			qcom,dst-bam-pipe-index = <3>;
-			qcom,data-fifo-size = <0x8000>;
-			qcom,descriptor-fifo-size = <0x2000>;
-			qcom,reset-bam-on-disconnect;
-		};
 	};
 
         ipa_hw: qcom,ipa@07900000 {

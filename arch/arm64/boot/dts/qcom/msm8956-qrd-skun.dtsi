@@ -33,16 +33,6 @@
 	qcom,vmax-mv = <3300>;
 };
 
-&pmx_mdss {
-	qcom,num-grp-pins = <1>;
-	qcom,pins = <&tlmm 25>;
-};
-
-&pmx_mdss_te {
-	qcom,num-grp-pins = <1>;
-	qcom,pins = <&tlmm 24>;
-};
-
 &sdc2_cd_on {
 	/delete-property/ bias-pull-up;
 	bias-disable;
@@ -138,8 +128,22 @@
 };
 
 &tlmm {
-	tlmm_gpio_key {
-		qcom,pins = <&tlmm 112>, <&tlmm 113>;
-		qcom,num-grp-pins = <2>;
+	pmx_mdss {
+		mdss_dsi_active: mdss_dsi_active {
+			mux {
+				pins = "gpio61";
+			};
+			config {
+				pins = "gpio61";
+			};
+		};
+		mdss_dsi_suspend: mdss_dsi_suspend {
+			mux {
+				pins = "gpio61";
+			};
+			config {
+				pins = "gpio61";
+			};
+		};
 	};
 };

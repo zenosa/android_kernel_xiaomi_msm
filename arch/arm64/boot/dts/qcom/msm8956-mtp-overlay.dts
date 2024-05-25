@@ -1,0 +1,42 @@
+// SPDX-License-Identifier: GPL-2.0
+// Copyright (c) 2014-2015, The Linux Foundation. All rights reserved.
+// Copyright (c) 2024, Benarji Anand <benarji385@gmail.com>
+
+/dts-v1/;
+/plugin/;
+
+#include "msm8956-mtp.dtsi"
+
+/ {
+	model = "Qualcomm Technologies, Inc. MSM8956 MTP";
+	compatible = "qcom,msm8956-mtp", "qcom,msm8956", "qcom,mtp";
+	qcom,board-id = <8 0>;
+};
+
+&vendor {
+	mtp_batterydata: qcom,battery-data {
+		qcom,batt-id-range-pct = <15>;
+		#include "batterydata-coslight-4000mah-4400mv.dtsi"
+		#include "batterydata-coslight-4000mah-4400mv-10k.dtsi"
+		#include "batterydata-sunwoda-4000mah-4400mv.dtsi"
+		#include "batterydata-scud-4000mah-4400mv.dtsi"
+	};
+};
+
+&pmi8950_fg {
+	qcom,battery-data = <&mtp_batterydata>;
+};
+
+&pmi_haptic{
+	qcom,lra-auto-res-mode="qwd";
+	qcom,lra-high-z="opt1";
+	qcom,lra-res-cal-period = <0>;
+	qcom,wave-play-rate-us = <4165>;
+};
+
+&pmi8950_charger {
+	qcom,battery-data = <&mtp_batterydata>;
+	qcom,chg-led-sw-controls;
+	qcom,chg-led-support;
+	qcom,usbin-vadc = <&pmi8950_vadc>;
+};

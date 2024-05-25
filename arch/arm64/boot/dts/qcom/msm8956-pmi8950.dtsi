@@ -1,0 +1,23 @@
+// SPDX-License-Identifier: GPL-2.0
+// Copyright (c) 2014-2015, The Linux Foundation. All rights reserved.
+// Copyright (c) 2024, Benarji Anand <benarji385@gmail.com>
+
+&labibb {
+	status = "ok";
+	qpnp,qpnp-labibb-mode = "lcd";
+};
+
+&usb3 {
+	vbus_dwc3-supply = <&usb2_phy0>;
+	extcon = <&pmi8950_charger>;
+};
+
+&mdss_dsi0 {
+	lab-supply = <&lab_regulator>;
+	ibb-supply = <&ibb_regulator>;
+};
+
+&mdss_dsi1 {
+	lab-supply = <&lab_regulator>;
+	ibb-supply = <&ibb_regulator>;
+};

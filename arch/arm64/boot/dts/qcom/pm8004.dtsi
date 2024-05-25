@@ -3,16 +3,15 @@
 #include <dt-bindings/spmi/spmi.h>
 
 &spmi_bus {
-
-	pmic@4 {
-		compatible = "qcom,pm8004", "qcom,spmi-pmic";
-		reg = <0x4 SPMI_USID>;
+	qcom,pm8004@2 {
+		compatible = "qcom,spmi-pmic";
+		reg = <0x2 SPMI_USID>;
 		#address-cells = <1>;
 		#size-cells = <0>;
 	};
 
-	pmic@5 {
-		compatible = "qcom,pm8004", "qcom,spmi-pmic";
+	qcom,pm8004@5 {
+		compatible = "qcom,spmi-pmic";
 		reg = <0x5 SPMI_USID>;
 		#address-cells = <1>;
 		#size-cells = <0>;

@@ -1,9 +1,7 @@
 // SPDX-License-Identifier: GPL-2.0
-/*
- * Copyright (c) 2015-2016, The Linux Foundation. All rights reserved.
- *
- * Copyright (c) 2016-2023, AngeloGioacchino Del Regno <kholk11@gmail.com>
- */
+// Copyright (c) 2015-2016, The Linux Foundation. All rights reserved.
+// Copyright (c) 2016-2023, AngeloGioacchino Del Regno <kholk11@gmail.com>
+// Copyright (c) 2024, Benarji Anand <benarji385@gmail.com>
 
 #include <linux/module.h>
 #include <linux/of.h>
@@ -423,6 +421,8 @@ enum msm8976_functions {
 	msm_mux_gcc_gp2_clk_b,
 	msm_mux_gcc_gp3_clk_b,
 	msm_mux_blsp_spi4,
+	msm_mux_nfc_en,
+	msm_mux_nfc_irq
 	msm_mux_cap_int,
 	msm_mux_blsp_i2c4,
 	msm_mux_blsp_spi5,
@@ -460,6 +460,7 @@ enum msm8976_functions {
 	msm_mux_uim2_present,
 	msm_mux_ts_xvdd,
 	msm_mux_mipi_dsi0,
+	msm_mux_nfc_pwr
 	msm_mux_us_euro,
 	msm_mux_ts_resout,
 	msm_mux_ts_sample,
@@ -503,6 +504,7 @@ enum msm8976_functions {
 	msm_mux_sdcard_det,
 	msm_mux_sec_mi2s,
 	msm_mux_ss_switch,
+	msm_mux_nfc_ese,
 	msm_mux_NA,
 };
 
@@ -530,6 +532,7 @@ static const char * const gpio_groups[] = {
 	"gpio135", "gpio136", "gpio137", "gpio138", "gpio139", "gpio140",
 	"gpio141", "gpio142", "gpio143", "gpio144",
 };
+
 static const char * const blsp_uart1_groups[] = {
 	"gpio0", "gpio1", "gpio2", "gpio3",
 };
@@ -579,6 +582,12 @@ static const char * const cap_int_groups[] = {
 };
 static const char * const blsp_i2c4_groups[] = {
 	"gpio14", "gpio15",
+};
+static const char * const nfc_en_groups[] = {
+	"gpio16",
+};
+static const char * const nfc_irq_groups[] = {
+	"gpio17",
 };
 static const char * const blsp_spi5_groups[] = {
 	"gpio134", "gpio135", "gpio136", "gpio137",
@@ -686,6 +695,9 @@ static const char * const ts_xvdd_groups[] = {
 };
 static const char * const mipi_dsi0_groups[] = {
 	"gpio61",
+};
+static const char * const nfc_pwr_groups[] = {
+	"gpio62",
 };
 static const char * const us_euro_groups[] = {
 	"gpio63",
@@ -814,9 +826,11 @@ static const char * const sdcard_det_groups[] = {
 static const char * const sec_mi2s_groups[] = {
 	"gpio102", "gpio105", "gpio134", "gpio135",
 };
-
 static const char * const ss_switch_groups[] = {
 	"gpio139",
+};
+static const char * const nfc_ese_groups[] = {
+	"gpio141",
 };
 
 static const struct msm_function msm8976_functions[] = {
@@ -835,6 +849,8 @@ static const struct msm_function msm8976_functions[] = {
 	FUNCTION(gcc_gp2_clk_b),
 	FUNCTION(gcc_gp3_clk_b),
 	FUNCTION(blsp_spi4),
+	FUNCTION(nfc_en),
+	FUNCTION(nfc_irq),
 	FUNCTION(cap_int),
 	FUNCTION(blsp_i2c4),
 	FUNCTION(blsp_spi5),
@@ -872,6 +888,7 @@ static const struct msm_function msm8976_functions[] = {
 	FUNCTION(uim2_present),
 	FUNCTION(ts_xvdd),
 	FUNCTION(mipi_dsi0),
+	FUNCTION(nfc_pwr),
 	FUNCTION(us_euro),
 	FUNCTION(ts_resout),
 	FUNCTION(ts_sample),
@@ -915,6 +932,7 @@ static const struct msm_function msm8976_functions[] = {
 	FUNCTION(sdcard_det),
 	FUNCTION(sec_mi2s),
 	FUNCTION(ss_switch),
+	FUNCTION(nfc_ese),
 };
 
 static const struct msm_pingroup msm8976_groups[] = {

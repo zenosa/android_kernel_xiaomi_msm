@@ -42,23 +42,25 @@
 	pinctrl-0 = <&uart_console_sleep>;
 };
 
-&i2c_3 { /* BLSP1 QUP3 */
-	nq@28 {
+&i2c_5 { /* BLSP2 QUP1 (NFC) */
+	status = "okay";
+	nfc@28 {
 		compatible = "qcom,nq-nci";
 		reg = <0x28>;
-		qcom,nq-irq = <&tlmm 21 0x00>;
-		qcom,nq-ven = <&tlmm 20 0x00>;
-		qcom,nq-clkreq = <&pm8950_gpios 5 0x00>;
-		qcom,nq-firm = <&tlmm 16 0x00>;
+		qcom,nq-ven = <&tlmm 16 0x00>;
+		qcom,nq-irq = <&tlmm 17 0x00>;
+		qcom,nq-firm = <&tlmm 62 0x00>;
+		qcom,nq-esepwr = <&tlmm 141 0x00>;
 		interrupt-parent = <&tlmm>;
-		qcom,clk-src = "BBCLK2";
-		interrupts = <21 0>;
+		interrupts = <0 17 0>;
 		interrupt-names = "nfc_irq";
-		pinctrl-names = "nfc_active", "nfc_suspend";
-		pinctrl-0 = <&nfc_int_active &nfc_disable_active>;
-		pinctrl-1 = <&nfc_int_suspend &nfc_disable_suspend>;
+
 		clocks = <&clock_rpmcc RPM_SMD_BB_CLK2_PIN>;
 		clock-names = "ref_clk";
+
+		pinctrl-names = "nfc_active", "nfc_suspend";
+		pinctrl-0 = <&nfc_active &nfc_en_active>;
+		pinctrl-1 = <&nfc_suspend &nfc_en_suspend>;
 	};
 };
 

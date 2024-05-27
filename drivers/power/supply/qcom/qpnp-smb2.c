@@ -148,6 +148,23 @@ static struct smb_params pm660_params = {
 	},
 };
 
+static struct smb_params pmi8950_params = {
+	.freq_buck		= {
+		.name	= "buck switching frequency",
+		.reg	= FREQ_CLK_DIV_REG,
+		.min_u	= 600,
+		.max_u	= 2000,
+		.set_proc = smblib_set_chg_freq,
+	},
+	.freq_boost		= {
+		.name	= "boost switching frequency",
+		.reg	= FREQ_CLK_DIV_REG,
+		.min_u	= 600,
+		.max_u	= 2000,
+		.set_proc = smblib_set_chg_freq,
+	},
+};
+
 struct smb_dt_props {
 	int	usb_icl_ua;
 	int	dc_icl_ua;
@@ -2026,6 +2043,20 @@ static int smb2_chg_config_init(struct smb2 *chip)
 	}
 
 	switch (pmic_rev_id->pmic_subtype) {
+		case PMI8950_SUBTYPE:
+		chip->chg.chg_param.smb_version = PMI8950_SUBTYPE;
+		chip->chg.wa_flags |= BOOST_BACK_WA | OTG_WA | OV_IRQ_WA_BIT
+				| TYPEC_PBS_WA_BIT;
+		chg->param.freq_buck = pmi8950_params.freq_buck;
+		chg->param.freq_boost = pmi8950_params.freq_boost;
+		chg->chg_freq.freq_5V		= 600;
+		chg->chg_freq.freq_6V_8V	= 800;
+		chg->chg_freq.freq_9V		= 1000;
+		chg->chg_freq.freq_12V		= 1200;
+		chg->chg_freq.freq_removal	= 1000;
+		chg->chg_freq.freq_below_otg_threshold = 2000;
+		chg->chg_freq.freq_above_otg_threshold = 800;
+		break;
 	case PMI8998_SUBTYPE:
 		chip->chg.chg_param.smb_version = PMI8998_SUBTYPE;
 		chip->chg.wa_flags |= BOOST_BACK_WA | QC_AUTH_INTERRUPT_WA_BIT

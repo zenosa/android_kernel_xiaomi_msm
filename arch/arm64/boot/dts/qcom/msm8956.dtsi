@@ -14,7 +14,9 @@
 	qcom,msm-id = <266 0x0>;
 	interrupt-parent = <&wakegic>;
 
-	chosen {};
+	chosen {
+		bootargs = "rcupdate.rcu_expedited=1";
+	};
 
 	firmware: firmware {
 		android {

@@ -674,9 +674,9 @@
 		regulator-always-on;
 	};
 
-	adv_vreg: adv_vreg {
+	vdd_vreg: vdd_vreg {
 		compatible = "regulator-fixed";
-		regulator-name = "adv_vreg";
+		regulator-name = "vdd_vreg";
 		startup-delay-us = <400>;
 		enable-active-high;
 		gpio = <&pm8950_gpios 4 0>;

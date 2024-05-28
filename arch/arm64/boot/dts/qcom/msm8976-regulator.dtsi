@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-2.0
 // Copyright (c) 2014-2015, The Linux Foundation. All rights reserved.
-// Copyright (c) 2023, Benarji Anand <benarji385@gmail.com>
+// Copyright (c) 2023-2024, Benarji Anand <benarji385@gmail.com>
 
 &rpm_bus {
 	rpm-regulator-smpa1 {
@@ -375,7 +375,7 @@
 		compatible = "qcom,cpr-regulator";
 		reg = <0xb018000 0x1000>, <0xa4000 0x1000>;
 		reg-names = "rbcpr", "efuse_addr";
-		interrupts = <0 15 0>;
+		interrupts = <GIC_SPI 15 IRQ_TYPE_LEVEL_HIGH>;
 		regulator-name = "apc0_corner";
 		regulator-min-microvolt = <1>;
 		regulator-max-microvolt = <9>;
@@ -474,7 +474,7 @@
 		compatible = "qcom,cpr-regulator";
 		reg = <0xb118000 0x1000>, <0xa0000 0x1000>;
 		reg-names = "rbcpr", "efuse_addr";
-		interrupts = <0 19 0>;
+		interrupts = <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>;
 		regulator-name = "apc1_corner";
 		regulator-min-microvolt = <1>;
 		regulator-max-microvolt = <7>;
@@ -583,7 +583,7 @@
 		compatible = "qcom,cpr2-gfx-regulator";
 		reg = <0x98000 0x1000>, <0xa4000 0x1000>;
 		reg-names = "rbcpr", "efuse_addr";
-		interrupts = <0 314 0>;
+		interrupts = <GIC_SPI 314 IRQ_TYPE_LEVEL_HIGH>;
 
 		regulator-name = "gfx_corner";
 		qcom,cpr-corners = <9>;

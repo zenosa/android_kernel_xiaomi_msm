@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-2.0
 // Copyright (c) 2015, The Linux Foundation. All rights reserved.
-// Copyright (c) 2023, Benarji Anand <benarji385@gmail.com>
+// Copyright (c) 2023-2024, Benarji Anand <benarji385@gmail.com>
 
 &soc {
 	tmc_etr: tmc@6026000 {
@@ -8,7 +8,7 @@
 		reg = <0x6026000 0x1000>,
 		      <0x6084000 0x15000>;
 		reg-names = "tmc-base", "bam-base";
-		interrupts = <0 166 0>;
+		interrupts = <GIC_SPI 166 IRQ_TYPE_LEVEL_HIGH>;
 		interrupt-names = "byte-cntr-irq";
 
 		qcom,memory-size = <0x500000>;
@@ -43,7 +43,7 @@
 		nidnt-gpio = <38>;
 		nidnt-gpio-polarity = <1>;
 
-		interrupts = <0 82 0>;
+		interrupts = <GIC_SPI 82 IRQ_TYPE_LEVEL_HIGH>;
 		interrupt-names = "nidnt-irq";
 
 		vdd-supply = <&pm8950_l11>;

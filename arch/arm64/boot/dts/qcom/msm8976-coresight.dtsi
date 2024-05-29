@@ -27,32 +27,11 @@
 
 	tpiu: tpiu@820000 {
 		compatible = "arm,coresight-tpiu";
-		reg = <0x6020000 0x1000>,
-		      <0x1100000 0xb0000>;
-		reg-names = "tpiu-base", "nidnt-base";
+		reg = <0x6020000 0x1000>;
+		reg-names = "tpiu-base";
 
 		coresight-id = <1>;
 		coresight-name = "coresight-tpiu";
-		coresight-nr-inports = <1>;
-
-		qcom,nidnthw;
-		qcom,nidnt-swduart;
-		qcom,nidnt-swdtrc;
-		qcom,nidnt-jtag;
-		qcom,nidnt-spmi;
-		nidnt-gpio = <38>;
-		nidnt-gpio-polarity = <1>;
-
-		interrupts = <GIC_SPI 82 IRQ_TYPE_LEVEL_HIGH>;
-		interrupt-names = "nidnt-irq";
-
-		vdd-supply = <&pm8950_l11>;
-		qcom,vdd-voltage-level = <2950000 2950000>;
-		qcom,vdd-current-level = <15000 400000>;
-
-		vdd-io-supply = <&pm8950_l12>;
-		qcom,vdd-io-voltage-level = <2950000 2950000>;
-		qcom,vdd-io-current-level = <200 50000>;
 
 		clocks = <&clock_rpmcc RPM_SMD_QDSS_CLK>,
 			 <&clock_rpmcc RPM_SMD_QDSS_A_CLK>;

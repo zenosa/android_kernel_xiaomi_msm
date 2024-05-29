@@ -4,6 +4,12 @@
 
 #include "msm8976-camera-sensor-qrd.dtsi"
 
+&blsp1_uart2 {
+        status = "ok";
+        pinctrl-names = "default";
+        pinctrl-0 = <&uart_console_sleep>;
+};
+
 &i2c_3 { /* BLSP1 QUP3 */
 	status = "okay";
 	synaptics@4b {
@@ -34,12 +40,6 @@
 					      172 900 2000 320 160>;
 		synaptics,resume-in-workqueue;
 	};
-};
-
-&blsp1_uart2 {
-        status = "ok";
-        pinctrl-names = "default";
-        pinctrl-0 = <&uart_console_sleep>;
 };
 
 &i2c_5 { /* BLSP2 QUP1 (NFC) */
@@ -75,8 +75,8 @@
 	qcom,vdd-io-current-level = <200 325000>;
 
 	pinctrl-names = "active", "sleep";
-	pinctrl-0 = <&sdc1_clk_on &sdc1_cmd_on &sdc1_data_on &sdc1_rclk_on>;
-	pinctrl-1 = <&sdc1_clk_off &sdc1_cmd_off &sdc1_data_off &sdc1_rclk_off>;
+	pinctrl-0 = <&sdc1_clk_on &sdc1_cmd_on>;
+	pinctrl-1 = <&sdc1_clk_off &sdc1_cmd_off>;
 
 	qcom,nonremovable;
 
@@ -93,8 +93,8 @@
 	qcom,vdd-io-current-level = <200 22000>;
 
 	pinctrl-names = "active", "sleep";
-	pinctrl-0 = <&sdc2_clk_on &sdc2_cmd_on &sdc2_data_on &sdc2_cd_on>;
-	pinctrl-1 = <&sdc2_clk_off &sdc2_cmd_off &sdc2_data_off &sdc2_cd_off>;
+	pinctrl-0 = <&sdc2_clk_on &sdc2_cmd_on>;
+	pinctrl-1 = <&sdc2_clk_off &sdc2_cmd_off>;
 
 	status = "ok";
 };

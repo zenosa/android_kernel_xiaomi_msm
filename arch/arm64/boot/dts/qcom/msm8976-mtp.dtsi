@@ -12,16 +12,12 @@
 	pinctrl-0 = <&uart_console_sleep>;
 };
 
-&mem_client_3_size {
-	qcom,peripheral-size = <0x500000>;
-};
-
-/{
-	mtp_batterydata: qcom,battery-data {
-		qcom,batt-id-range-pct = <15>;
-		#include "batterydata-coslight-4000mah-4400mv.dtsi"
-		#include "batterydata-coslight-4000mah-4400mv-10k.dtsi"
-		#include "batterydata-sunwoda-4000mah-4400mv.dtsi"
+/ {
+mtp_batterydata: qcom,battery-data {
+	qcom,batt-id-range-pct = <15>;
+	#include "batterydata-coslight-4000mah-4400mv.dtsi"
+	#include "batterydata-coslight-4000mah-4400mv-10k.dtsi"
+	#include "batterydata-sunwoda-4000mah-4400mv.dtsi"
 	};
 };
 
@@ -47,8 +43,8 @@
 	qcom,vdd-io-current-level = <200 325000>;
 
 	pinctrl-names = "active", "sleep";
-	pinctrl-0 = <&sdc1_clk_on &sdc1_cmd_on &sdc1_data_on &sdc1_rclk_on>;
-	pinctrl-1 = <&sdc1_clk_off &sdc1_cmd_off &sdc1_data_off &sdc1_rclk_off>;
+	pinctrl-0 = <&sdc1_clk_on &sdc1_cmd_on>;
+	pinctrl-1 = <&sdc1_clk_off &sdc1_cmd_off>;
 
 	qcom,nonremovable;
 
@@ -66,8 +62,8 @@
 	qcom,vdd-io-current-level = <200 22000>;
 
 	pinctrl-names = "active", "sleep";
-	pinctrl-0 = <&sdc2_clk_on &sdc2_cmd_on &sdc2_data_on &sdc2_cd_on>;
-	pinctrl-1 = <&sdc2_clk_off &sdc2_cmd_off &sdc2_data_off &sdc2_cd_off>;
+	pinctrl-0 = <&sdc2_clk_on &sdc2_cmd_on>;
+	pinctrl-1 = <&sdc2_clk_off &sdc2_cmd_off>;
 
 	status = "ok";
 };
@@ -143,32 +139,18 @@
 		vdd_ana-supply = <&pm8950_l6>;
 		vdd_io-supply = <&pm8950_l6>;
 	};
-};
 
-&spmi_bus {
-	qcom,pmi8950@3 {
-		qcom,haptic@c000 {
-			compatible = "qcom,qpnp-haptic";
-			reg = <0xc000 0x100>;
-			interrupts = <0x3 0xc0 0x0>,
-				<0x3 0xc0 0x1>;
-			interrupt-names = "sc-irq", "play-irq";
-			qcom,play-mode = "direct";
-			qcom,wave-play-rate-us = <5263>;
-			qcom,actuator-type = "erm";
-			qcom,wave-shape = "square";
-			qcom,vmax-mv = <2800>;
-			qcom,ilim-ma = <800>;
-			qcom,sc-deb-cycles = <8>;
-			qcom,int-pwm-freq-khz = <505>;
-			qcom,en-brake;
-			qcom,brake-pattern = [03 03 00 00];
-			qcom,use-play-irq;
-			qcom,use-sc-irq;
-			qcom,wave-samples = [3e 3e 3e 3e 3e 3e 3e 3e];
-			qcom,wave-rep-cnt = <1>;
-			qcom,wave-samp-rep-cnt = <1>;
-		};
+	goodix_gf318m {
+		compatible = "goodix,fingerprint";
+
+		vcc_spi-supply  = <&pm8950_l10>;
+		vdd_ana-supply  = <&pm8950_l10>;
+		vdd_io-supply   = <&pm8950_l10>;
+
+		goodix,gpio_reset =<&tlmm 110 0>;
+		goodix,gpio_irq = <&tlmm 106 0>;
+		goodix,gpio_pwr = <&tlmm 119 0>;
+
 	};
 };
 

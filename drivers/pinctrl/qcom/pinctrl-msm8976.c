@@ -1112,7 +1112,6 @@ static int msm8976_pinctrl_probe(struct platform_device *pdev)
 }
 
 static const struct of_device_id msm8976_pinctrl_of_match[] = {
-        { .compatible = "qcom,msm8956-pinctrl", },
 	{ .compatible = "qcom,msm8976-pinctrl", },
 	{ },
 };

@@ -4159,7 +4159,6 @@ static int gcc_msm8976_probe(struct platform_device *pdev)
 }
 
 static const struct of_device_id gcc_msm8976_match_table[] = {
-	{ .compatible = "qcom,gcc-msm8956" },
         { .compatible = "qcom,gcc-msm8976" },
 	{},
 };

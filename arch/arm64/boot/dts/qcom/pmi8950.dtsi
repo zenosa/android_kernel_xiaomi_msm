@@ -43,6 +43,8 @@
 			qcom,adc-vdd-reference = <1800>;
 			qcom,vadc-poll-eoc;
 			#thermal-sensor-cells = <1>;
+			#io-channel-cells = <1>;
+			io-channel-ranges;
 
 			chan@0 {
 				label = "usbin";

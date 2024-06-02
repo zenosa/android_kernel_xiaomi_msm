@@ -96,14 +96,6 @@
 		qcom,gpu-quirk-dp2clockgating-disable;
 		qcom,gpu-quirk-lmloadkill-disable;
 
-		/* Trace bus */
-		coresight-id = <67>;
-		coresight-name = "coresight-gfx";
-		coresight-nr-inports = <0>;
-		coresight-outports = <0>;
-		coresight-child-list = <&funnel_in0>;
-		coresight-child-ports = <4>;
-
 		/* Enable context aware freq. scaling */
 		qcom,enable-ca-jump;
 

@@ -399,6 +399,14 @@
 		};
 	};
 
+	llcc: qcom,llcc@9200000 {
+		compatible = "qcom,msm8976-llcc";
+		reg = <0x9200000 0x1d0000>,
+		      <0x9600000 0x50000>;
+		reg-names = "llcc_base", "llcc_broadcast_base";
+		interrupts = <GIC_SPI 582 IRQ_TYPE_LEVEL_HIGH>;
+	};
+
 	arm64-cpu-erp {
 		compatible = "arm,arm64-cpu-erp";
 		interrupts = <GIC_SPI 275 IRQ_TYPE_LEVEL_HIGH>,

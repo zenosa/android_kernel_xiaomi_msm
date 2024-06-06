@@ -247,11 +247,6 @@
 		#reset-cells = <1>;
 	};
 
-	clock_debug: qcom,cc-debug@1874000 {
-		compatible = "qcom,cc-debug-8976";
-		#clock-cells = <1>;
-	};
-
 	clock_gfx: gfx@1800000 {
                 compatible = "qcom,gcc-msm8976";
                 reg = <0x1800000 0x80000>;
@@ -397,6 +392,14 @@
 			reg-names = "spm_c0_base", "spm_c1_base",
 				     "spm_cci_base";
 		};
+	};
+
+	clock_debug: qcom,cc-debug@1874000 {
+		compatible = "qcom,msm8976-debugcc";
+		qcom,gcc = <&clock_gcc>;
+		clocks = <&xo_board>;
+		clock-names = "xo";
+		#clock-cells = <1>;
 	};
 
 	llcc: qcom,llcc@9200000 {

@@ -303,6 +303,10 @@ int mdp5_disable(struct mdp5_kms *mdp5_kms)
 	mdp5_kms->enable_count--;
 	WARN_ON(mdp5_kms->enable_count < 0);
 
+	if (mdp5_kms->tbu_clk)
+		clk_disable_unprepare(mdp5_kms->tbu_clk);
+	if (mdp5_kms->tcu_clk)
+		clk_disable_unprepare(mdp5_kms->tcu_clk);
 	clk_disable_unprepare(mdp5_kms->ahb_clk);
 	clk_disable_unprepare(mdp5_kms->axi_clk);
 	clk_disable_unprepare(mdp5_kms->core_clk);
@@ -318,6 +322,10 @@ int mdp5_enable(struct mdp5_kms *mdp5_kms)
 
 	mdp5_kms->enable_count++;
 
+	if (mdp5_kms->tbu_clk)
+		clk_prepare_enable(mdp5_kms->tbu_clk);
+	if (mdp5_kms->tcu_clk)
+		clk_prepare_enable(mdp5_kms->tcu_clk);
 	clk_prepare_enable(mdp5_kms->ahb_clk);
 	clk_prepare_enable(mdp5_kms->axi_clk);
 	clk_prepare_enable(mdp5_kms->core_clk);
@@ -957,6 +965,8 @@ static int mdp5_init(struct platform_device *pdev, struct drm_device *dev)
 		goto fail;
 
 	/* optional clocks: */
+	get_clk(pdev, &mdp5_kms->tbu_clk, "tbu", false);
+	get_clk(pdev, &mdp5_kms->tcu_clk, "tcu", false);
 	get_clk(pdev, &mdp5_kms->lut_clk, "lut", false);
 
 	/* we need to set a default rate before enabling.  Set a safe

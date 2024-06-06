@@ -8,9 +8,11 @@
 &soc {
 	kgsl_smmu: arm,smmu-kgsl@1c40000 {
 		status = "ok";
-		compatible = "qcom,smmu-v2";
+		compatible = "qcom,qsmmu-v500";
+		reg = <0x1c40000 0x10000>,
+			<0x1ee2000 0x20>;
+		reg-names = "base", "tcu-base";
 		qcom,tz-device-id = "GPU";
-		reg = <0x1c40000 0x10000>;
 		#iommu-cells = <1>;
 		#global-interrupts = <0>;
 		interrupts = <GIC_SPI 240 IRQ_TYPE_LEVEL_HIGH>,
@@ -38,7 +40,7 @@
 		iommus = <&kgsl_smmu 0x0>;
 	};
 
-	apps_iommu: qcom,iommu@1e00000 {
+	apps_smmu: qcom,iommu@1e00000 {
 		status = "okay";
 		compatible = "qcom,qsmmu-v500";
 		reg = <0x1e00000 0x40000>,

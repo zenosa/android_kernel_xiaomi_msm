@@ -72,13 +72,13 @@
 		non_secure_cb {
 			compatible = "qcom,msm-vidc,context-bank";
 			label = "venus_ns";
-			iommus = <&apps_iommu 0x800 0x01>,
-				<&apps_iommu 0x807 0x00>,
-				<&apps_iommu 0x808 0x07>,
-				<&apps_iommu 0x810 0x01>,
-				<&apps_iommu 0x828 0x01>,
-				<&apps_iommu 0x82c 0x01>,
-				<&apps_iommu 0x821 0x10>;
+			iommus = <&apps_smmu 0x800 0x01>,
+				<&apps_smmu 0x807 0x00>,
+				<&apps_smmu 0x808 0x07>,
+				<&apps_smmu 0x810 0x01>,
+				<&apps_smmu 0x828 0x01>,
+				<&apps_smmu 0x82c 0x01>,
+				<&apps_smmu 0x821 0x10>;
 			buffer-types = <0xfff>;
 			virtual-addr-pool = <0x79000000 0x28000000
 				0xa1000000 0xc9000000>;
@@ -87,12 +87,12 @@
 		secure_bitstream_cb {
 			compatible = "qcom,msm-vidc,context-bank";
 			label = "venus_sec_bitstream";
-			 iommus = <&apps_iommu 0x900 0x0>,
-				<&apps_iommu 0x902 0x8>,
-				<&apps_iommu 0x909 0x2>,
-				<&apps_iommu 0x90e 0x0>,
-				<&apps_iommu 0x926 0x0>,
-				<&apps_iommu 0x929 0x2>;
+			 iommus = <&apps_smmu 0x900 0x0>,
+				<&apps_smmu 0x902 0x8>,
+				<&apps_smmu 0x909 0x2>,
+				<&apps_smmu 0x90e 0x0>,
+				<&apps_smmu 0x926 0x0>,
+				<&apps_smmu 0x929 0x2>;
 			buffer-types = <0x241>;
 			virtual-addr-pool = <0x51000000 0x28000000>;
 			qcom,secure-context-bank;
@@ -101,9 +101,9 @@
 		secure_pixel_cb {
 			compatible = "qcom,msm-vidc,context-bank";
 			label = "venus_sec_pixel";
-			iommus = <&apps_iommu 0x904 0x8>,
-				<&apps_iommu 0x910 0x0>,
-				<&apps_iommu 0x92c 0x0>;
+			iommus = <&apps_smmu 0x904 0x8>,
+				<&apps_smmu 0x910 0x0>,
+				<&apps_smmu 0x92c 0x0>;
 			buffer-types = <0x106>;
 			virtual-addr-pool = <0x29000000 0x28000000>;
 			qcom,secure-context-bank;
@@ -112,10 +112,10 @@
 		secure_non_pixel_cb {
 			compatible = "qcom,msm-vidc,context-bank";
 			label = "venus_sec_non_pixel";
-			iommus = <&apps_iommu 0x908 0x0>,
-				<&apps_iommu 0x905 0xa>,
-				<&apps_iommu 0x925 0x8>,
-				<&apps_iommu 0x928 0x0>;
+			iommus = <&apps_smmu 0x908 0x0>,
+				<&apps_smmu 0x905 0xa>,
+				<&apps_smmu 0x925 0x8>,
+				<&apps_smmu 0x928 0x0>;
 			buffer-types = <0x480>;
 			virtual-addr-pool = <0x1000000 0x28000000>;
 			qcom,secure-context-bank;

@@ -156,6 +156,15 @@ config MSM_GCC_8976
 	  Say Y if you want to use peripheral devices such as UART, SPI,
 	  i2c, USB, SD/eMMC, SATA, PCIe, etc.
 
+config MSM_DEBUGCC_8976
+        tristate "MSM8956/76 Debug Clock Controller"
+        depends on COMMON_CLK_QCOM
+        help
+          Support for the debug clock controller on Qualcomm Technologies, Inc
+          MSM8956/76 devices.
+
+          Say Y if you want to support the clock measurement functionality.
+
 config MSM_LCC_8960
 	tristate "APQ8064/MSM8960 LPASS Clock Controller"
 	select MSM_GCC_8960

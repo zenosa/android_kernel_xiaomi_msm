@@ -1255,6 +1255,28 @@ static struct clk_rcg2 mdp_clk_src = {
 	}
 };
 
+static const struct freq_tbl ftbl_mdss_rot_clk_src[] = {
+	F(19200000, P_XO, 1, 0, 0),
+	F(171428571, P_GPLL0_DIV2, 3.5, 0, 0),
+	F(300000000, P_GPLL0, 2, 0, 0),
+	F(344000000, P_GPLL0, 2.5, 0, 0),
+	{ }
+};
+
+static struct clk_rcg2 mdss_rot_clk_src = {
+	.cmd_rcgr = 0x4d11c,
+	.mnd_width = 0,
+	.hid_width = 5,
+	.parent_map = gcc_parent_map_13,
+	.freq_tbl = ftbl_mdss_rot_clk_src,
+	.clkr.hw.init = &(struct clk_init_data){
+		.name = "mdss_rot_clk_src",
+		.parent_names = gcc_parent_names_13,
+		.num_parents = 5,
+		.ops = &clk_rcg2_ops,
+	},
+};
+
 static const struct parent_map gcc_parent_map_14[] = {
 	{ P_XO, 0 },
 	{ P_DSI0PLL, 1 },
@@ -3181,6 +3203,24 @@ static struct clk_branch gcc_mdss_mdp_clk = {
 	}
 };
 
+static struct clk_branch gcc_mdss_rot_clk = {
+	.halt_reg = 0x4d2cc,
+	.halt_check = BRANCH_HALT,
+	.clkr = {
+		.enable_reg = 0x4d2cc,
+		.enable_mask = BIT(0),
+		.hw.init = &(struct clk_init_data){
+			.name = "gcc_mdss_rot_clk",
+			.parent_names = (const char *[]){
+				"mdss_rot_clk_src",
+			},
+			.num_parents = 1,
+			.flags = CLK_SET_RATE_PARENT,
+			.ops = &clk_branch2_ops,
+		},
+	},
+};
+
 static struct clk_branch gcc_mdss_pclk0_clk = {
 	.halt_reg = 0x4d084,
 	.halt_check = BRANCH_HALT,
@@ -3934,6 +3974,7 @@ static struct clk_regmap *gcc_msm8976_clocks[] = {
 	[MCLK1_CLK_SRC] = &mclk1_clk_src.clkr,
 	[MCLK2_CLK_SRC] = &mclk2_clk_src.clkr,
 	[MDP_CLK_SRC] = &mdp_clk_src.clkr,
+	[MDSS_ROT_CLK_SRC] = &mdss_rot_clk_src.clkr,
 	[PCLK0_CLK_SRC] = &pclk0_clk_src.clkr,
 	[PCLK1_CLK_SRC] = &pclk1_clk_src.clkr,
 	[PDM2_CLK_SRC] = &pdm2_clk_src.clkr,
@@ -4041,6 +4082,7 @@ static struct clk_regmap *gcc_msm8976_clocks[] = {
 	[GCC_MDSS_ESC0_CLK] = &gcc_mdss_esc0_clk.clkr,
 	[GCC_MDSS_ESC1_CLK] = &gcc_mdss_esc1_clk.clkr,
 	[GCC_MDSS_MDP_CLK] = &gcc_mdss_mdp_clk.clkr,
+	[GCC_MDSS_ROT_CLK] = &gcc_mdss_rot_clk.clkr,
 	[GCC_MDSS_PCLK0_CLK] = &gcc_mdss_pclk0_clk.clkr,
 	[GCC_MDSS_PCLK1_CLK] = &gcc_mdss_pclk1_clk.clkr,
 	[GCC_MDSS_VSYNC_CLK] = &gcc_mdss_vsync_clk.clkr,

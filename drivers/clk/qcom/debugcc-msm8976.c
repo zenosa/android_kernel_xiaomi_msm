@@ -128,10 +128,12 @@ static const char *const gcc_debug_mux_parent_names[] = {
 	"gcc_sdcc2_apps_clk",
 	"gcc_sdcc3_ahb_clk",
 	"gcc_sdcc3_apps_clk",
-	"gcc_usb2a_phy_sleep_clk",
-	"gcc_usb_hs_ahb_clk",
-	"gcc_usb_hs_phy_cfg_ahb_clk",
-	"gcc_usb_hs_system_clk",
+        "gcc_pcnoc_usb3_axi_clk",
+        "gcc_usb30_master_clk",
+        "gcc_usb30_sleep_clk",
+        "gcc_usb30_mock_utmi_clk",
+        "gcc_usb_phy_cfg_ahb_clk",
+        "gcc_usb3_pipe_clk",
 	"gcc_venus0_ahb_clk",
 	"gcc_venus0_axi_clk",
 	"gcc_venus0_core0_vcodec0_clk",
@@ -259,10 +261,12 @@ static int gcc_debug_mux_sels[] = {
 	0x70,		 /* gcc_sdcc2_apps_clk */
 	0x221,		 /* gcc_sdcc3_ahb_clk */
 	0x220,		 /* gcc_sdcc3_apps_clk */
-	0x63,		 /* gcc_usb2a_phy_sleep_clk */
-	0x61,		 /* gcc_usb_hs_ahb_clk */
-	0x64,		 /* gcc_usb_hs_phy_cfg_ahb_clk */
-	0x60,		 /* gcc_usb_hs_system_clk */
+	0x0e,		 /* gcc_pcnoc_usb3_axi_clk */
+	0x60,		 /* gcc_usb30_master_clk */
+	0x61,		 /* gcc_usb30_sleep_clk */
+	0x62,		 /* gcc_usb30_mock_utmi_clk */
+	0x63,		 /* gcc_usb_phy_cfg_ahb_clk */
+	0x66,		 /* gcc_usb3_pipe_clk */
 	0x1f3,		 /* gcc_venus0_ahb_clk */
 	0x1f2,		 /* gcc_venus0_axi_clk */
 	0x1b8,		 /* gcc_venus0_core0_vcodec0_clk */

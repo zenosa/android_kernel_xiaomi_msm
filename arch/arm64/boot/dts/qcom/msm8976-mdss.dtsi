@@ -319,6 +319,81 @@
 		qcom,mdss_pan_bpp = <24>;
 		qcom,mdss-fb-map = <&mdss_fb1>;
 	};
+
+	mdss_rotator: qcom,mdss_rotator@ae00000 {
+		compatible = "qcom,sde_rotator";
+		reg = <0xae00000 0xac000>,
+		      <0xaeb8000 0x3000>;
+		reg-names = "mdp_phys",
+			    "vbif_phys";
+
+		qcom,mdss-rot-mode = <1>;
+		qcom,mdss-highest-bank-bit = <0x2>;
+
+		/* Bus Scale Settings */
+		qcom,msm-bus,name = "mdss_rotator";
+		qcom,msm-bus,num-cases = <3>;
+		qcom,msm-bus,num-paths = <1>;
+		qcom,msm-bus,vectors-KBps =
+			<25 512 0 0>,
+			<25 512 0 6400000>,
+			<25 512 0 6400000>;
+
+		rot-vdd-supply = <&gdsc_mdss>;
+		qcom,supply-names = "rot-vdd";
+
+		clocks = <&clock_gcc GCC_MDSS_AHB_CLK>,
+			 <&clock_gcc GCC_MDSS_AXI_CLK>,
+			 <&clock_gcc GCC_MDSS_ROT_CLK>;
+		clock-names = "iface_clk", "bus_clk",
+				"rot_clk";
+
+		interrupts = <GIC_SPI 0 IRQ_TYPE_LEVEL_HIGH>;
+
+		/* Offline rotator QoS setting */
+		qcom,mdss-rot-vbif-qos-setting = <3 3 3 3 3 3 3 3>;
+		qcom,mdss-rot-vbif-memtype = <3 3>;
+		qcom,mdss-rot-cdp-setting = <1 1>;
+		qcom,mdss-rot-qos-lut = <0x0 0x0 0x0 0x0>;
+		qcom,mdss-rot-danger-lut = <0x0 0x0>;
+		qcom,mdss-rot-safe-lut = <0x0000ffff 0x0000ffff>;
+
+		/* Inline rotator QoS Setting */
+		/* setting default register values for RD - qos/danger/safe */
+		qcom,mdss-inline-rot-qos-lut = <0x44556677 0x00112233
+							0x44556677 0x00112233>;
+		qcom,mdss-inline-rot-danger-lut = <0x0055aaff 0x0000ffff>;
+		qcom,mdss-inline-rot-safe-lut = <0x0000f000 0x0000ff00>;
+
+		qcom,mdss-default-ot-rd-limit = <32>;
+		qcom,mdss-default-ot-wr-limit = <32>;
+
+		qcom,mdss-sbuf-headroom = <20>;
+
+		cache-slice-names = "rotator";
+		cache-slices = <&llcc 4>;
+
+		/* reg bus scale settings */
+		rot_reg: qcom,rot-reg-bus {
+			qcom,msm-bus,name = "mdss_rot_reg";
+			qcom,msm-bus,num-cases = <2>;
+			qcom,msm-bus,num-paths = <1>;
+			qcom,msm-bus,active-only;
+			qcom,msm-bus,vectors-KBps =
+				<1 590 0 0>,
+				<1 590 0 76800>;
+		};
+
+		smmu_rot_unsec: qcom,smmu_rot_unsec_cb {
+			compatible = "qcom,smmu_sde_rot_unsec";
+			iommus = <&apps_smmu 0x1090 0x0>;
+		};
+
+		smmu_rot_sec: qcom,smmu_rot_sec_cb {
+			compatible = "qcom,smmu_sde_rot_sec";
+			iommus = <&apps_smmu 0x1091 0x0>;
+		};
+	};
 };
 
 #include "msm8976-mdss-panels.dtsi"

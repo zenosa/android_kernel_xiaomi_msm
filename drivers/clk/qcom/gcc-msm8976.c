@@ -21,6 +21,10 @@
 #include "common.h"
 #include "gdsc.h"
 #include "reset.h"
+#include "vdd-level-8976.h"
+
+static DEFINE_VDD_REGULATORS(vdd_cx, VDD_CX_NUM, 1, vdd_cx_corner);
+static DEFINE_VDD_REGULATORS(vdd_gx, VDD_GX_NUM, 1, vdd_gx_corner);
 
 enum {
 	P_XO,
@@ -230,8 +234,16 @@ static struct clk_rcg2 apc0_droop_detector_clk_src = {
 		.parent_names = gcc_parent_names_1,
 		.num_parents = ARRAY_SIZE(gcc_parent_names_1),
 		.ops = &clk_rcg2_ops,
+		.vdd_class = &vdd_cx,
+		.num_rate_max = VDD_CX_NUM,
+		.rate_max = (unsigned long[VDD_CX_NUM]) {
+			[VDD_CX_MIN] = 19200000,
+			[VDD_CX_LOW] = 400000000,
+			[VDD_CX_NOMINAL] = 576000000,
+		}
 	}
 };
+
 static struct clk_rcg2 apc1_droop_detector_clk_src = {
 	.cmd_rcgr = 0x79008,
 	.hid_width = 5,
@@ -242,6 +254,13 @@ static struct clk_rcg2 apc1_droop_detector_clk_src = {
 		.parent_names = gcc_parent_names_1,
 		.num_parents = ARRAY_SIZE(gcc_parent_names_1),
 		.ops = &clk_rcg2_ops,
+		.vdd_class = &vdd_cx,
+		.num_rate_max = VDD_CX_NUM,
+		.rate_max = (unsigned long[VDD_CX_NUM]) {
+			[VDD_CX_MIN] = 19200000,
+			[VDD_CX_LOW] = 400000000,
+			[VDD_CX_NOMINAL] = 576000000,
+		}
 	}
 };
 
@@ -284,6 +303,13 @@ static struct clk_rcg2 blsp1_qup1_i2c_apps_clk_src = {
 		.parent_names = gcc_parent_names_0,
 		.num_parents = ARRAY_SIZE(gcc_parent_names_0),
 		.ops = &clk_rcg2_ops,
+		.vdd_class = &vdd_cx,
+		.num_rate_max = VDD_CX_NUM,
+		.rate_max = (unsigned long[VDD_CX_NUM]) {
+			[VDD_CX_MIN] = 19200000,
+			[VDD_CX_LOW] = 25000000,
+			[VDD_CX_NOMINAL] = 50000000,
+		}
 	}
 };
 
@@ -297,6 +323,13 @@ static struct clk_rcg2 blsp1_qup2_i2c_apps_clk_src = {
 		.parent_names = gcc_parent_names_0,
 		.num_parents = ARRAY_SIZE(gcc_parent_names_0),
 		.ops = &clk_rcg2_ops,
+		.vdd_class = &vdd_cx,
+		.num_rate_max = VDD_CX_NUM,
+		.rate_max = (unsigned long[VDD_CX_NUM]) {
+			[VDD_CX_MIN] = 19200000,
+			[VDD_CX_LOW] = 25000000,
+			[VDD_CX_NOMINAL] = 50000000,
+		}
 	}
 };
 
@@ -310,6 +343,13 @@ static struct clk_rcg2 blsp1_qup3_i2c_apps_clk_src = {
 		.parent_names = gcc_parent_names_0,
 		.num_parents = ARRAY_SIZE(gcc_parent_names_0),
 		.ops = &clk_rcg2_ops,
+		.vdd_class = &vdd_cx,
+		.num_rate_max = VDD_CX_NUM,
+		.rate_max = (unsigned long[VDD_CX_NUM]) {
+			[VDD_CX_MIN] = 19200000,
+			[VDD_CX_LOW] = 25000000,
+			[VDD_CX_NOMINAL] = 50000000,
+		}
 	}
 };
 
@@ -323,6 +363,13 @@ static struct clk_rcg2 blsp1_qup4_i2c_apps_clk_src = {
 		.parent_names = gcc_parent_names_0,
 		.num_parents = ARRAY_SIZE(gcc_parent_names_0),
 		.ops = &clk_rcg2_ops,
+		.vdd_class = &vdd_cx,
+		.num_rate_max = VDD_CX_NUM,
+		.rate_max = (unsigned long[VDD_CX_NUM]) {
+			[VDD_CX_MIN] = 19200000,
+			[VDD_CX_LOW] = 25000000,
+			[VDD_CX_NOMINAL] = 50000000,
+		}
 	}
 };
 
@@ -336,6 +383,13 @@ static struct clk_rcg2 blsp2_qup1_i2c_apps_clk_src = {
 		.parent_names = gcc_parent_names_0,
 		.num_parents = ARRAY_SIZE(gcc_parent_names_0),
 		.ops = &clk_rcg2_ops,
+		.vdd_class = &vdd_cx,
+		.num_rate_max = VDD_CX_NUM,
+		.rate_max = (unsigned long[VDD_CX_NUM]) {
+			[VDD_CX_MIN] = 19200000,
+			[VDD_CX_LOW] = 25000000,
+			[VDD_CX_NOMINAL] = 50000000,
+		}
 	}
 };
 
@@ -349,6 +403,13 @@ static struct clk_rcg2 blsp2_qup2_i2c_apps_clk_src = {
 		.parent_names = gcc_parent_names_0,
 		.num_parents = ARRAY_SIZE(gcc_parent_names_0),
 		.ops = &clk_rcg2_ops,
+		.vdd_class = &vdd_cx,
+		.num_rate_max = VDD_CX_NUM,
+		.rate_max = (unsigned long[VDD_CX_NUM]) {
+			[VDD_CX_MIN] = 19200000,
+			[VDD_CX_LOW] = 25000000,
+			[VDD_CX_NOMINAL] = 50000000,
+		}
 	}
 };
 
@@ -362,6 +423,13 @@ static struct clk_rcg2 blsp2_qup3_i2c_apps_clk_src = {
 		.parent_names = gcc_parent_names_0,
 		.num_parents = ARRAY_SIZE(gcc_parent_names_0),
 		.ops = &clk_rcg2_ops,
+		.vdd_class = &vdd_cx,
+		.num_rate_max = VDD_CX_NUM,
+		.rate_max = (unsigned long[VDD_CX_NUM]) {
+			[VDD_CX_MIN] = 19200000,
+			[VDD_CX_LOW] = 25000000,
+			[VDD_CX_NOMINAL] = 50000000,
+		}
 	}
 };
 
@@ -375,15 +443,17 @@ static struct clk_rcg2 blsp2_qup4_i2c_apps_clk_src = {
 		.parent_names = gcc_parent_names_0,
 		.num_parents = ARRAY_SIZE(gcc_parent_names_0),
 		.ops = &clk_rcg2_ops,
+		.vdd_class = &vdd_cx,
+		.num_rate_max = VDD_CX_NUM,
+		.rate_max = (unsigned long[VDD_CX_NUM]) {
+			[VDD_CX_MIN] = 19200000,
+			[VDD_CX_LOW] = 25000000,
+			[VDD_CX_NOMINAL] = 50000000,
+		}
 	}
 };
 
 static const struct freq_tbl ftbl_blsp_spi_apps_clk_src[] = {
-	F(960000, P_XO, 10, 1, 2),
-	F(4800000, P_XO, 4, 0, 0),
-	F(9600000, P_XO, 2, 0, 0),
-	F(12500000, P_GPLL0_DIV2, 16, 1, 2),
-	F(16000000, P_GPLL0, 10, 1, 5),
 	F(19200000, P_XO, 1, 0, 0),
 	F(25000000, P_GPLL0, 16, 1, 2),
 	F(50000000, P_GPLL0, 16, 0, 0),
@@ -401,6 +471,13 @@ static struct clk_rcg2 blsp1_qup1_spi_apps_clk_src = {
 		.parent_names = gcc_parent_names_0,
 		.num_parents = ARRAY_SIZE(gcc_parent_names_0),
 		.ops = &clk_rcg2_ops,
+		.vdd_class = &vdd_cx,
+		.num_rate_max = VDD_CX_NUM,
+		.rate_max = (unsigned long[VDD_CX_NUM]) {
+			[VDD_CX_MIN] = 19200000,
+			[VDD_CX_LOW] = 25000000,
+			[VDD_CX_NOMINAL] = 50000000,
+		}
 	}
 };
 
@@ -415,6 +492,13 @@ static struct clk_rcg2 blsp1_qup2_spi_apps_clk_src = {
 		.parent_names = gcc_parent_names_0,
 		.num_parents = ARRAY_SIZE(gcc_parent_names_0),
 		.ops = &clk_rcg2_ops,
+		.vdd_class = &vdd_cx,
+		.num_rate_max = VDD_CX_NUM,
+		.rate_max = (unsigned long[VDD_CX_NUM]) {
+			[VDD_CX_MIN] = 19200000,
+			[VDD_CX_LOW] = 25000000,
+			[VDD_CX_NOMINAL] = 50000000,
+		}
 	}
 };
 
@@ -429,6 +513,13 @@ static struct clk_rcg2 blsp1_qup3_spi_apps_clk_src = {
 		.parent_names = gcc_parent_names_0,
 		.num_parents = ARRAY_SIZE(gcc_parent_names_0),
 		.ops = &clk_rcg2_ops,
+		.vdd_class = &vdd_cx,
+		.num_rate_max = VDD_CX_NUM,
+		.rate_max = (unsigned long[VDD_CX_NUM]) {
+			[VDD_CX_MIN] = 19200000,
+			[VDD_CX_LOW] = 25000000,
+			[VDD_CX_NOMINAL] = 50000000,
+		}
 	}
 };
 
@@ -443,6 +534,13 @@ static struct clk_rcg2 blsp1_qup4_spi_apps_clk_src = {
 		.parent_names = gcc_parent_names_0,
 		.num_parents = ARRAY_SIZE(gcc_parent_names_0),
 		.ops = &clk_rcg2_ops,
+		.vdd_class = &vdd_cx,
+		.num_rate_max = VDD_CX_NUM,
+		.rate_max = (unsigned long[VDD_CX_NUM]) {
+			[VDD_CX_MIN] = 19200000,
+			[VDD_CX_LOW] = 25000000,
+			[VDD_CX_NOMINAL] = 50000000,
+		}
 	}
 };
 
@@ -457,6 +555,13 @@ static struct clk_rcg2 blsp2_qup1_spi_apps_clk_src = {
 		.parent_names = gcc_parent_names_0,
 		.num_parents = ARRAY_SIZE(gcc_parent_names_0),
 		.ops = &clk_rcg2_ops,
+		.vdd_class = &vdd_cx,
+		.num_rate_max = VDD_CX_NUM,
+		.rate_max = (unsigned long[VDD_CX_NUM]) {
+			[VDD_CX_MIN] = 19200000,
+			[VDD_CX_LOW] = 25000000,
+			[VDD_CX_NOMINAL] = 50000000,
+		}
 	}
 };
 
@@ -471,6 +576,13 @@ static struct clk_rcg2 blsp2_qup2_spi_apps_clk_src = {
 		.parent_names = gcc_parent_names_0,
 		.num_parents = ARRAY_SIZE(gcc_parent_names_0),
 		.ops = &clk_rcg2_ops,
+		.vdd_class = &vdd_cx,
+		.num_rate_max = VDD_CX_NUM,
+		.rate_max = (unsigned long[VDD_CX_NUM]) {
+			[VDD_CX_MIN] = 19200000,
+			[VDD_CX_LOW] = 25000000,
+			[VDD_CX_NOMINAL] = 50000000,
+		}
 	}
 };
 
@@ -485,6 +597,13 @@ static struct clk_rcg2 blsp2_qup3_spi_apps_clk_src = {
 		.parent_names = gcc_parent_names_0,
 		.num_parents = ARRAY_SIZE(gcc_parent_names_0),
 		.ops = &clk_rcg2_ops,
+		.vdd_class = &vdd_cx,
+		.num_rate_max = VDD_CX_NUM,
+		.rate_max = (unsigned long[VDD_CX_NUM]) {
+			[VDD_CX_MIN] = 19200000,
+			[VDD_CX_LOW] = 25000000,
+			[VDD_CX_NOMINAL] = 50000000,
+		}
 	}
 };
 
@@ -499,19 +618,22 @@ static struct clk_rcg2 blsp2_qup4_spi_apps_clk_src = {
 		.parent_names = gcc_parent_names_0,
 		.num_parents = ARRAY_SIZE(gcc_parent_names_0),
 		.ops = &clk_rcg2_ops,
+		.vdd_class = &vdd_cx,
+		.num_rate_max = VDD_CX_NUM,
+		.rate_max = (unsigned long[VDD_CX_NUM]) {
+			[VDD_CX_MIN] = 19200000,
+			[VDD_CX_LOW] = 25000000,
+			[VDD_CX_NOMINAL] = 50000000,
+		}
 	}
 };
 
 static const struct freq_tbl ftbl_blsp_uart_apps_clk_src[] = {
-	F(3686400, P_GPLL0_DIV2, 1, 144, 15625),
-	F(7372800, P_GPLL0_DIV2, 1, 288, 15625),
-	F(14745600, P_GPLL0_DIV2, 1, 576, 15625),
-	F(16000000, P_GPLL0_DIV2, 5, 1, 5),
 	F(19200000, P_XO, 1, 0, 0),
-	F(24000000, P_GPLL0, 1, 3, 100),
-	F(25000000, P_GPLL0, 16, 1, 2),
-	F(32000000, P_GPLL0, 1, 1, 25),
-	F(40000000, P_GPLL0, 1, 1, 20),
+	F(24000000, P_GPLL0_DIV2, 1, 3, 100),
+	F(25000000, P_GPLL0_DIV2, 16, 1, 2),
+	F(32000000, P_GPLL0_DIV2, 1, 1, 25),
+	F(40000000, P_GPLL0_DIV2, 1, 1, 20),
 	F(46400000, P_GPLL0, 1, 29, 500),
 	F(48000000, P_GPLL0, 1, 3, 50),
 	F(51200000, P_GPLL0, 1, 8, 125),
@@ -533,6 +655,13 @@ static struct clk_rcg2 blsp1_uart1_apps_clk_src = {
 		.parent_names = gcc_parent_names_0,
 		.num_parents = ARRAY_SIZE(gcc_parent_names_0),
 		.ops = &clk_rcg2_ops,
+		.vdd_class = &vdd_cx,
+		.num_rate_max = VDD_CX_NUM,
+		.rate_max = (unsigned long[VDD_CX_NUM]) {
+			[VDD_CX_MIN] = 19200000,
+			[VDD_CX_LOW] = 32000000,
+			[VDD_CX_NOMINAL] = 64000000,
+		}
 	}
 };
 
@@ -547,6 +676,13 @@ static struct clk_rcg2 blsp1_uart2_apps_clk_src = {
 		.parent_names = gcc_parent_names_0,
 		.num_parents = ARRAY_SIZE(gcc_parent_names_0),
 		.ops = &clk_rcg2_ops,
+		.vdd_class = &vdd_cx,
+		.num_rate_max = VDD_CX_NUM,
+		.rate_max = (unsigned long[VDD_CX_NUM]) {
+			[VDD_CX_MIN] = 19200000,
+			[VDD_CX_LOW] = 32000000,
+			[VDD_CX_NOMINAL] = 64000000,
+		}
 	}
 };
 
@@ -561,6 +697,13 @@ static struct clk_rcg2 blsp2_uart1_apps_clk_src = {
 		.parent_names = gcc_parent_names_0,
 		.num_parents = ARRAY_SIZE(gcc_parent_names_0),
 		.ops = &clk_rcg2_ops,
+		.vdd_class = &vdd_cx,
+		.num_rate_max = VDD_CX_NUM,
+		.rate_max = (unsigned long[VDD_CX_NUM]) {
+			[VDD_CX_MIN] = 19200000,
+			[VDD_CX_LOW] = 32000000,
+			[VDD_CX_NOMINAL] = 64000000,
+		}
 	}
 };
 
@@ -575,6 +718,13 @@ static struct clk_rcg2 blsp2_uart2_apps_clk_src = {
 		.parent_names = gcc_parent_names_0,
 		.num_parents = ARRAY_SIZE(gcc_parent_names_0),
 		.ops = &clk_rcg2_ops,
+		.vdd_class = &vdd_cx,
+		.num_rate_max = VDD_CX_NUM,
+		.rate_max = (unsigned long[VDD_CX_NUM]) {
+			[VDD_CX_MIN] = 19200000,
+			[VDD_CX_LOW] = 32000000,
+			[VDD_CX_NOMINAL] = 64000000,
+		}
 	}
 };
 
@@ -663,6 +813,13 @@ static struct clk_rcg2 camss_gp0_clk_src = {
 		.parent_names = gcc_parent_names_4,
 		.num_parents = ARRAY_SIZE(gcc_parent_names_4),
 		.ops = &clk_rcg2_ops,
+		.vdd_class = &vdd_cx,
+		.num_rate_max = VDD_CX_NUM,
+		.rate_max = (unsigned long[VDD_CX_NUM]) {
+			[VDD_CX_MIN] = 50000000,
+			[VDD_CX_LOW] = 100000000,
+			[VDD_CX_HIGH] = 266670000,
+		}
 	}
 };
 
@@ -677,6 +834,13 @@ static struct clk_rcg2 camss_gp1_clk_src = {
 		.parent_names = gcc_parent_names_4,
 		.num_parents = ARRAY_SIZE(gcc_parent_names_4),
 		.ops = &clk_rcg2_ops,
+		.vdd_class = &vdd_cx,
+		.num_rate_max = VDD_CX_NUM,
+		.rate_max = (unsigned long[VDD_CX_NUM]) {
+			[VDD_CX_MIN] = 50000000,
+			[VDD_CX_LOW] = 100000000,
+			[VDD_CX_HIGH] = 266670000,
+		}
 	}
 };
 
@@ -696,6 +860,12 @@ static struct clk_rcg2 camss_top_ahb_clk_src = {
 		.parent_names = gcc_parent_names_0,
 		.num_parents = ARRAY_SIZE(gcc_parent_names_0),
 		.ops = &clk_rcg2_ops,
+		.vdd_class = &vdd_cx,
+		.num_rate_max = VDD_CX_NUM,
+		.rate_max = (unsigned long[VDD_CX_NUM]) {
+			[VDD_CX_MIN] = 40000000,
+			[VDD_CX_LOW] = 80000000,
+                }
 	}
 };
 
@@ -730,6 +900,11 @@ static struct clk_rcg2 cci_clk_src = {
 		.parent_names = gcc_parent_names_5,
 		.num_parents = ARRAY_SIZE(gcc_parent_names_5),
 		.ops = &clk_rcg2_ops,
+		.vdd_class = &vdd_cx,
+		.num_rate_max = VDD_CX_NUM,
+		.rate_max = (unsigned long[VDD_CX_NUM]) {
+			[VDD_CX_MIN] = 19200000,
+		}
 	}
 };
 
@@ -769,6 +944,13 @@ static struct clk_rcg2 cpp_clk_src = {
 		.parent_names = gcc_parent_names_6,
 		.num_parents = ARRAY_SIZE(gcc_parent_names_6),
 		.ops = &clk_rcg2_ops,
+		.vdd_class = &vdd_cx,
+		.num_rate_max = VDD_CX_NUM,
+		.rate_max = (unsigned long[VDD_CX_NUM]) {
+			[VDD_CX_MIN] = 100000000,
+			[VDD_CX_LOW] = 200000000,
+			[VDD_CX_NOMINAL] = 400000000,
+		}
 	}
 };
 
@@ -790,6 +972,13 @@ static struct clk_rcg2 crypto_clk_src = {
 		.parent_names = gcc_parent_names_0,
 		.num_parents = ARRAY_SIZE(gcc_parent_names_0),
 		.ops = &clk_rcg2_ops,
+		.vdd_class = &vdd_cx,
+		.num_rate_max = VDD_CX_NUM,
+		.rate_max = (unsigned long[VDD_CX_NUM]) {
+			[VDD_CX_MIN] = 40000000,
+			[VDD_CX_LOW] = 80000000,
+			[VDD_CX_NOMINAL] = 160000000,
+		}
 	}
 };
 
@@ -826,6 +1015,13 @@ static struct clk_rcg2 csi0_clk_src = {
 		.parent_names = gcc_parent_names_7,
 		.num_parents = ARRAY_SIZE(gcc_parent_names_7),
 		.ops = &clk_rcg2_ops,
+		.vdd_class = &vdd_cx,
+		.num_rate_max = VDD_CX_NUM,
+		.rate_max = (unsigned long[VDD_CX_NUM]) {
+			[VDD_CX_MIN] = 100000000,
+			[VDD_CX_LOW] = 200000000,
+			[VDD_CX_NOMINAL] = 400000000,
+                }
 	}
 };
 
@@ -839,6 +1035,13 @@ static struct clk_rcg2 csi1_clk_src = {
 		.parent_names = gcc_parent_names_7,
 		.num_parents = ARRAY_SIZE(gcc_parent_names_7),
 		.ops = &clk_rcg2_ops,
+		.vdd_class = &vdd_cx,
+		.num_rate_max = VDD_CX_NUM,
+		.rate_max = (unsigned long[VDD_CX_NUM]) {
+			[VDD_CX_MIN] = 100000000,
+			[VDD_CX_LOW] = 200000000,
+			[VDD_CX_NOMINAL] = 400000000,
+                }
 	}
 };
 
@@ -852,6 +1055,13 @@ static struct clk_rcg2 csi2_clk_src = {
 		.parent_names = gcc_parent_names_7,
 		.num_parents = ARRAY_SIZE(gcc_parent_names_7),
 		.ops = &clk_rcg2_ops,
+		.vdd_class = &vdd_cx,
+		.num_rate_max = VDD_CX_NUM,
+		.rate_max = (unsigned long[VDD_CX_NUM]) {
+			[VDD_CX_MIN] = 100000000,
+			[VDD_CX_LOW] = 200000000,
+			[VDD_CX_NOMINAL] = 400000000,
+                }
 	}
 };
 
@@ -890,6 +1100,14 @@ static struct clk_rcg2 csi0p_clk_src = {
 		.parent_names = gcc_parent_names_8,
 		.num_parents = ARRAY_SIZE(gcc_parent_names_8),
 		.ops = &clk_rcg2_ops,
+		.vdd_class = &vdd_cx,
+		.num_rate_max = VDD_CX_NUM,
+		.rate_max = (unsigned long[VDD_CX_NUM]) {
+			[VDD_CX_MIN] = 66670000,
+			[VDD_CX_LOW] = 133330000,
+			[VDD_CX_NOMINAL] = 200000000,
+			[VDD_CX_HIGH] = 310000000,
+		}
 	}
 };
 
@@ -903,6 +1121,14 @@ static struct clk_rcg2 csi1p_clk_src = {
 		.parent_names = gcc_parent_names_8,
 		.num_parents = ARRAY_SIZE(gcc_parent_names_8),
 		.ops = &clk_rcg2_ops,
+		.vdd_class = &vdd_cx,
+		.num_rate_max = VDD_CX_NUM,
+		.rate_max = (unsigned long[VDD_CX_NUM]) {
+			[VDD_CX_MIN] = 66670000,
+			[VDD_CX_LOW] = 133330000,
+			[VDD_CX_NOMINAL] = 200000000,
+			[VDD_CX_HIGH] = 310000000,
+		}
 	}
 };
 
@@ -916,6 +1142,14 @@ static struct clk_rcg2 csi2p_clk_src = {
 		.parent_names = gcc_parent_names_8,
 		.num_parents = ARRAY_SIZE(gcc_parent_names_8),
 		.ops = &clk_rcg2_ops,
+		.vdd_class = &vdd_cx,
+		.num_rate_max = VDD_CX_NUM,
+		.rate_max = (unsigned long[VDD_CX_NUM]) {
+			[VDD_CX_MIN] = 66670000,
+			[VDD_CX_LOW] = 133330000,
+			[VDD_CX_NOMINAL] = 200000000,
+			[VDD_CX_HIGH] = 310000000,
+		}
 	}
 };
 
@@ -936,6 +1170,13 @@ static struct clk_rcg2 csi0phytimer_clk_src = {
 		.parent_names = gcc_parent_names_0,
 		.num_parents = ARRAY_SIZE(gcc_parent_names_0),
 		.ops = &clk_rcg2_ops,
+		.vdd_class = &vdd_cx,
+		.num_rate_max = VDD_CX_NUM,
+		.rate_max = (unsigned long[VDD_CX_NUM]) {
+			[VDD_CX_MIN] = 100000000,
+			[VDD_CX_LOW] = 200000000,
+			[VDD_CX_NOMINAL] = 266670000,
+		}
 	}
 };
 
@@ -949,6 +1190,13 @@ static struct clk_rcg2 csi1phytimer_clk_src = {
 		.parent_names = gcc_parent_names_0,
 		.num_parents = ARRAY_SIZE(gcc_parent_names_0),
 		.ops = &clk_rcg2_ops,
+		.vdd_class = &vdd_cx,
+		.num_rate_max = VDD_CX_NUM,
+		.rate_max = (unsigned long[VDD_CX_NUM]) {
+			[VDD_CX_MIN] = 100000000,
+			[VDD_CX_LOW] = 200000000,
+			[VDD_CX_NOMINAL] = 266670000,
+		}
 	}
 };
 
@@ -962,6 +1210,13 @@ static struct clk_rcg2 csi2phytimer_clk_src = {
 		.parent_names = gcc_parent_names_0,
 		.num_parents = ARRAY_SIZE(gcc_parent_names_0),
 		.ops = &clk_rcg2_ops,
+		.vdd_class = &vdd_cx,
+		.num_rate_max = VDD_CX_NUM,
+		.rate_max = (unsigned long[VDD_CX_NUM]) {
+			[VDD_CX_MIN] = 100000000,
+			[VDD_CX_LOW] = 200000000,
+			[VDD_CX_NOMINAL] = 266670000,
+		}
 	}
 };
 
@@ -990,6 +1245,11 @@ static struct clk_rcg2 esc0_clk_src = {
 		.parent_names = gcc_parent_names_9,
 		.num_parents = ARRAY_SIZE(gcc_parent_names_9),
 		.ops = &clk_rcg2_ops,
+		.vdd_class = &vdd_cx,
+		.num_rate_max = VDD_CX_NUM,
+		.rate_max = (unsigned long[VDD_CX_NUM]) {
+			[VDD_CX_MIN] = 19200000,
+		}
 	}
 };
 
@@ -1003,6 +1263,11 @@ static struct clk_rcg2 esc1_clk_src = {
 		.parent_names = gcc_parent_names_9,
 		.num_parents = ARRAY_SIZE(gcc_parent_names_9),
 		.ops = &clk_rcg2_ops,
+		.vdd_class = &vdd_cx,
+		.num_rate_max = VDD_CX_NUM,
+		.rate_max = (unsigned long[VDD_CX_NUM]) {
+			[VDD_CX_MIN] = 19200000,
+		}
 	}
 };
 
@@ -1058,6 +1323,14 @@ static struct clk_rcg2 gfx3d_clk_src = {
 		.num_parents = ARRAY_SIZE(gcc_parent_names_10),
 		.ops = &clk_rcg2_floor_ops,
 		.flags = CLK_SET_RATE_PARENT,
+		.vdd_class = &vdd_gx,
+		.num_rate_max = VDD_GX_NUM,
+		.rate_max = (unsigned long[VDD_GX_NUM]) {
+			[VDD_GX_MIN] = 19200000,
+			[VDD_GX_LOW] = 80000000,
+			[VDD_GX_NOMINAL] = 400000000,
+			[VDD_GX_HIGH] = 600000000,
+		}
 	}
 };
 
@@ -1077,6 +1350,11 @@ static struct clk_rcg2 gp1_clk_src = {
 		.parent_names = gcc_parent_names_4,
 		.num_parents = ARRAY_SIZE(gcc_parent_names_4),
 		.ops = &clk_rcg2_ops,
+		.vdd_class = &vdd_cx,
+		.num_rate_max = VDD_CX_NUM,
+		.rate_max = (unsigned long[VDD_CX_NUM]) {
+			[VDD_CX_MIN] = 19200000,
+		}
 	}
 };
 
@@ -1091,6 +1369,11 @@ static struct clk_rcg2 gp2_clk_src = {
 		.parent_names = gcc_parent_names_4,
 		.num_parents = ARRAY_SIZE(gcc_parent_names_4),
 		.ops = &clk_rcg2_ops,
+		.vdd_class = &vdd_cx,
+		.num_rate_max = VDD_CX_NUM,
+		.rate_max = (unsigned long[VDD_CX_NUM]) {
+			[VDD_CX_MIN] = 19200000,
+		}
 	}
 };
 
@@ -1105,6 +1388,11 @@ static struct clk_rcg2 gp3_clk_src = {
 		.parent_names = gcc_parent_names_4,
 		.num_parents = ARRAY_SIZE(gcc_parent_names_4),
 		.ops = &clk_rcg2_ops,
+		.vdd_class = &vdd_cx,
+		.num_rate_max = VDD_CX_NUM,
+		.rate_max = (unsigned long[VDD_CX_NUM]) {
+			[VDD_CX_MIN] = 19200000,
+		}
 	}
 };
 
@@ -1144,6 +1432,14 @@ static struct clk_rcg2 jpeg0_clk_src = {
 		.parent_names = gcc_parent_names_11,
 		.num_parents = ARRAY_SIZE(gcc_parent_names_11),
 		.ops = &clk_rcg2_ops,
+		.vdd_class = &vdd_cx,
+		.num_rate_max = VDD_CX_NUM,
+		.rate_max = (unsigned long[VDD_CX_NUM]) {
+			[VDD_CX_MIN] = 66670000,
+			[VDD_CX_LOW] = 133330000,
+			[VDD_CX_NOMINAL] = 266670000,
+			[VDD_CX_HIGH] = 320000000,
+		}
 	}
 };
 
@@ -1166,7 +1462,7 @@ static const char * const gcc_parent_names_12[] = {
 };
 
 static const struct freq_tbl ftbl_mclk_clk_src[] = {
-	F(19200000, P_GPLL6, 5, 4, 45),
+	F(19200000, P_XO, 5, 4, 45),
 	F(24000000, P_GPLL6_DIV2, 1, 2, 45),
 	F(26000000, P_GPLL0, 1, 4, 123),
 	F(33330000, P_GPLL6_DIV2, 12, 0, 0),
@@ -1186,6 +1482,12 @@ static struct clk_rcg2 mclk0_clk_src = {
 		.parent_names = gcc_parent_names_12,
 		.num_parents = ARRAY_SIZE(gcc_parent_names_12),
 		.ops = &clk_rcg2_ops,
+		.vdd_class = &vdd_cx,
+		.num_rate_max = VDD_CX_NUM,
+		.rate_max = (unsigned long[VDD_CX_NUM]) {
+			[VDD_CX_MIN] = 33330000,
+			[VDD_CX_LOW] = 66670000,
+		}
 	}
 };
 
@@ -1200,6 +1502,12 @@ static struct clk_rcg2 mclk1_clk_src = {
 		.parent_names = gcc_parent_names_12,
 		.num_parents = ARRAY_SIZE(gcc_parent_names_12),
 		.ops = &clk_rcg2_ops,
+		.vdd_class = &vdd_cx,
+		.num_rate_max = VDD_CX_NUM,
+		.rate_max = (unsigned long[VDD_CX_NUM]) {
+			[VDD_CX_MIN] = 33330000,
+			[VDD_CX_LOW] = 66670000,
+		}
 	}
 };
 
@@ -1214,6 +1522,12 @@ static struct clk_rcg2 mclk2_clk_src = {
 		.parent_names = gcc_parent_names_12,
 		.num_parents = ARRAY_SIZE(gcc_parent_names_12),
 		.ops = &clk_rcg2_ops,
+		.vdd_class = &vdd_cx,
+		.num_rate_max = VDD_CX_NUM,
+		.rate_max = (unsigned long[VDD_CX_NUM]) {
+			[VDD_CX_MIN] = 33330000,
+			[VDD_CX_LOW] = 66670000,
+		}
 	}
 };
 
@@ -1252,6 +1566,14 @@ static struct clk_rcg2 mdp_clk_src = {
 		.parent_names = gcc_parent_names_13,
 		.num_parents = ARRAY_SIZE(gcc_parent_names_13),
 		.ops = &clk_rcg2_ops,
+		.vdd_class = &vdd_cx,
+		.num_rate_max = VDD_CX_NUM,
+		.rate_max = (unsigned long[VDD_CX_NUM]) {
+			[VDD_CX_MIN] = 160000000,
+			[VDD_CX_LOW] = 266670000,
+			[VDD_CX_NOMINAL] = 320000000,
+			[VDD_CX_HIGH] = 400000000,
+		}
 	}
 };
 
@@ -1274,6 +1596,14 @@ static struct clk_rcg2 mdss_rot_clk_src = {
 		.parent_names = gcc_parent_names_13,
 		.num_parents = 5,
 		.ops = &clk_rcg2_ops,
+		.vdd_class = &vdd_cx,
+		.num_rate_max = VDD_CX_NUM,
+		.rate_max = (unsigned long[VDD_CX_NUM]) {
+			[VDD_CX_MIN] = 160000000,
+			[VDD_CX_LOW] = 266670000,
+			[VDD_CX_NOMINAL] = 320000000,
+			[VDD_CX_HIGH] = 400000000,
+		}
 	},
 };
 
@@ -1333,6 +1663,12 @@ static struct clk_rcg2 pdm2_clk_src = {
 		.parent_names = gcc_parent_names_0,
 		.num_parents = ARRAY_SIZE(gcc_parent_names_0),
 		.ops = &clk_rcg2_ops,
+		.vdd_class = &vdd_cx,
+		.num_rate_max = VDD_CX_NUM,
+		.rate_max = (unsigned long[VDD_CX_NUM]) {
+			[VDD_CX_MIN] = 32000000,
+			[VDD_CX_LOW] = 64000000,
+		}
 	}
 };
 
@@ -1352,6 +1688,12 @@ static struct clk_rcg2 rbcpr_gfx_clk_src = {
 		.parent_names = gcc_parent_names_0,
 		.num_parents = ARRAY_SIZE(gcc_parent_names_0),
 		.ops = &clk_rcg2_ops,
+		.vdd_class = &vdd_cx,
+		.num_rate_max = VDD_CX_NUM,
+		.rate_max = (unsigned long[VDD_CX_NUM]) {
+			[VDD_CX_MIN] = 19200000,
+			[VDD_CX_LOW] = 50000000,
+		}
 	}
 };
 
@@ -1386,6 +1728,13 @@ static struct clk_rcg2 sdcc1_ice_core_clk_src = {
 		.parent_names = gcc_parent_names_15,
 		.num_parents = ARRAY_SIZE(gcc_parent_names_15),
 		.ops = &clk_rcg2_ops,
+		.vdd_class = &vdd_cx,
+		.num_rate_max = VDD_CX_NUM,
+		.rate_max = (unsigned long[VDD_CX_NUM]) {
+			[VDD_CX_MIN] = 80000000,
+			[VDD_CX_LOW] = 160000000,
+			[VDD_CX_NOMINAL] = 270000000,
+		}
 	}
 };
 
@@ -1404,8 +1753,7 @@ static const char * const gcc_parent_names_16[] = {
 };
 
 static const struct freq_tbl ftbl_sdcc1_apps_clk_src[] = {
-	F(144000, P_XO, 16, 3, 25),
-	F(400000, P_XO, 12, 1, 4),
+	F(19200000, P_XO, 1, 0, 0),
 	F(20000000, P_GPLL0_DIV2, 5, 1, 4),
 	F(25000000, P_GPLL0_DIV2, 16, 0, 0),
 	F(50000000, P_GPLL0, 16, 0, 0),
@@ -1427,12 +1775,18 @@ static struct clk_rcg2 sdcc1_apps_clk_src = {
 		.parent_names = gcc_parent_names_16,
 		.num_parents = ARRAY_SIZE(gcc_parent_names_16),
 		.ops = &clk_rcg2_floor_ops,
+		.vdd_class = &vdd_cx,
+		.num_rate_max = VDD_CX_NUM,
+		.rate_max = (unsigned long[VDD_CX_NUM]) {
+			[VDD_CX_MIN] = 25000000,
+			[VDD_CX_LOW] = 100000000,
+			[VDD_CX_NOMINAL] = 384000000,
+		}
 	}
 };
 
 static const struct freq_tbl ftbl_sdcc2_apps_clk_src[] = {
-	F(144000, P_XO, 16, 3, 25),
-	F(400000, P_XO, 12, 1, 4),
+	F(19200000, P_XO, 1, 0, 0),
 	F(20000000, P_GPLL0_DIV2, 5, 1, 4),
 	F(25000000, P_GPLL0_DIV2, 16, 0, 0),
 	F(50000000, P_GPLL0, 16, 0, 0),
@@ -1454,6 +1808,13 @@ static struct clk_rcg2 sdcc2_apps_clk_src = {
 		.parent_names = gcc_parent_names_16,
 		.num_parents = ARRAY_SIZE(gcc_parent_names_16),
 		.ops = &clk_rcg2_floor_ops,
+		.vdd_class = &vdd_cx,
+		.num_rate_max = VDD_CX_NUM,
+		.rate_max = (unsigned long[VDD_CX_NUM]) {
+			[VDD_CX_MIN] = 25000000,
+			[VDD_CX_LOW] = 100000000,
+			[VDD_CX_NOMINAL] = 200000000,
+		}
 	}
 };
 
@@ -1468,6 +1829,13 @@ static struct clk_rcg2 sdcc3_apps_clk_src = {
 		.parent_names = gcc_parent_names_16,
 		.num_parents = ARRAY_SIZE(gcc_parent_names_16),
 		.ops = &clk_rcg2_floor_ops,
+		.vdd_class = &vdd_cx,
+		.num_rate_max = VDD_CX_NUM,
+		.rate_max = (unsigned long[VDD_CX_NUM]) {
+			[VDD_CX_MIN] = 25000000,
+			[VDD_CX_LOW] = 100000000,
+			[VDD_CX_NOMINAL] = 200000000,
+		}
 	}
 };
 
@@ -1490,12 +1858,17 @@ static struct clk_rcg2 usb30_master_clk_src = {
 		.parent_names = gcc_parent_names_0,
 		.num_parents = ARRAY_SIZE(gcc_parent_names_0),
 		.ops = &clk_rcg2_ops,
+		.vdd_class = &vdd_cx,
+		.num_rate_max = VDD_CX_NUM,
+		.rate_max = (unsigned long[VDD_CX_NUM]) {
+			[VDD_CX_MIN] = 33333333,
+			[VDD_CX_NOMINAL] = 133333333,
+		}
 	}
 };
 
 static const struct freq_tbl ftbl_usb30_mock_utmi_clk_src[] = {
 	F(19200000, P_XO, 1, 0, 0),
-	F(20000000, P_GPLL6_DIV2, 15, 0, 0),
 	F(60000000, P_GPLL6_DIV2, 5, 0, 0),
 	{ }
 };
@@ -1511,6 +1884,12 @@ static struct clk_rcg2 usb30_mock_utmi_clk_src = {
 		.parent_names = gcc_parent_names_0,
 		.num_parents = ARRAY_SIZE(gcc_parent_names_0),
 		.ops = &clk_rcg2_ops,
+		.vdd_class = &vdd_cx,
+		.num_rate_max = VDD_CX_NUM,
+		.rate_max = (unsigned long[VDD_CX_NUM]) {
+			[VDD_CX_MIN] = 19200000,
+			[VDD_CX_LOW] = 60000000,
+		}
 	}
 };
 
@@ -1551,6 +1930,14 @@ static struct clk_rcg2 vcodec0_clk_src = {
 		.parent_names = gcc_parent_names_17,
 		.num_parents = ARRAY_SIZE(gcc_parent_names_17),
 		.ops = &clk_rcg2_ops,
+		.vdd_class = &vdd_cx,
+		.num_rate_max = VDD_CX_NUM,
+		.rate_max = (unsigned long[VDD_CX_NUM]) {
+			[VDD_CX_MIN] = 114290000,
+			[VDD_CX_LOW] = 228570000,
+			[VDD_CX_NOMINAL] = 360000000,
+			[VDD_CX_HIGH] = 465000000,
+		}
 	}
 };
 
@@ -1595,6 +1982,13 @@ static struct clk_rcg2 vfe0_clk_src = {
 		.parent_names = gcc_parent_names_18,
 		.num_parents = ARRAY_SIZE(gcc_parent_names_18),
 		.ops = &clk_rcg2_ops,
+		.vdd_class = &vdd_cx,
+		.num_rate_max = VDD_CX_NUM,
+		.rate_max = (unsigned long[VDD_CX_NUM]) {
+			[VDD_CX_MIN] = 100000000,
+			[VDD_CX_LOW] = 200000000,
+			[VDD_CX_NOMINAL] = 465000000,
+                }
 	}
 };
 
@@ -1608,6 +2002,13 @@ static struct clk_rcg2 vfe1_clk_src = {
 		.parent_names = gcc_parent_names_18,
 		.num_parents = ARRAY_SIZE(gcc_parent_names_18),
 		.ops = &clk_rcg2_ops,
+		.vdd_class = &vdd_cx,
+		.num_rate_max = VDD_CX_NUM,
+		.rate_max = (unsigned long[VDD_CX_NUM]) {
+			[VDD_CX_MIN] = 100000000,
+			[VDD_CX_LOW] = 200000000,
+			[VDD_CX_NOMINAL] = 465000000,
+                }
 	}
 };
 
@@ -1626,6 +2027,11 @@ static struct clk_rcg2 vsync_clk_src = {
 		.parent_names = gcc_parent_names_9,
 		.num_parents = ARRAY_SIZE(gcc_parent_names_9),
 		.ops = &clk_rcg2_ops,
+		.vdd_class = &vdd_cx,
+		.num_rate_max = VDD_CX_NUM,
+		.rate_max = (unsigned long[VDD_CX_NUM]) {
+			[VDD_CX_MIN] = 19200000,
+		}
 	}
 };
 
@@ -4172,6 +4578,22 @@ static int gcc_msm8976_probe(struct platform_device *pdev)
 	if (IS_ERR(regmap)) {
 		pr_err("Failed to map the GCC registers\n");
 		return PTR_ERR(regmap);
+	}
+
+	vdd_cx.regulator[0] = devm_regulator_get(&pdev->dev, "vdd_cx");
+	if (IS_ERR(vdd_cx.regulator[0])) {
+		if (!(PTR_ERR(vdd_cx.regulator[0]) == -EPROBE_DEFER))
+			dev_err(&pdev->dev,
+				"Unable to get vdd_cx regulator\n");
+		return PTR_ERR(vdd_cx.regulator[0]);
+	}
+
+	vdd_gx.regulator[0] = devm_regulator_get(&pdev->dev, "vdd_gx");
+	if (IS_ERR(vdd_gx.regulator[0])) {
+		if (!(PTR_ERR(vdd_gx.regulator[0]) == -EPROBE_DEFER))
+			dev_err(&pdev->dev,
+				"Unable to get vdd_gx regulator\n");
+		return PTR_ERR(vdd_gx.regulator[0]);
 	}
 
 	clk_alpha_pll_configure(&gpll0_out_main, regmap, &gpll0_config);

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2018, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2015-2024, The Linux Foundation. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -36,6 +36,7 @@
 #include "cpr3-regulator.h"
 
 #define MSM8953_APSS_FUSE_CORNERS	4
+#define MSM8976_APSS_FUSE_CORNERS	4
 #define SDM632_POWER_APSS_FUSE_CORNERS	4
 #define SDM632_PERF_APSS_FUSE_CORNERS	4
 
@@ -82,6 +83,7 @@ struct cpr4_apss_fuses {
  * where: fusing revision = 0 - 7 and speed bin = 0 - 7
  */
 #define CPR4_MSM8953_APSS_FUSE_COMBO_COUNT	64
+#define CPR4_MSM8976_APSS_FUSE_COMBO_COUNT	4
 #define CPR4_SDM632_APSS_FUSE_COMBO_COUNT	64
 
 /*
@@ -99,6 +101,20 @@ static const char * const cpr4_msm8953_apss_fuse_corner_name[] = {
 	[CPR4_MSM8953_APSS_FUSE_CORNER_SVS]		= "SVS",
 	[CPR4_MSM8953_APSS_FUSE_CORNER_NOM]		= "NOM",
 	[CPR4_MSM8953_APSS_FUSE_CORNER_TURBO_L1]	= "TURBO_L1",
+};
+
+enum cpr4_msm8976_apss_fuse_corner {
+	CPR4_MSM8976_APSS_FUSE_CORNER_LOWSVS	= 0,
+	CPR4_MSM8976_APSS_FUSE_CORNER_SVS	= 1,
+	CPR4_MSM8976_APSS_FUSE_CORNER_NOM	= 2,
+	CPR4_MSM8976_APSS_FUSE_CORNER_TURBO	= 3,
+};
+
+static const char * const cpr4_msm8976_apss_fuse_corner_name[] = {
+	[CPR4_MSM8976_APSS_FUSE_CORNER_LOWSVS]	  = "LowSVS",
+	[CPR4_MSM8976_APSS_FUSE_CORNER_SVS]	  = "SVS",
+	[CPR4_MSM8976_APSS_FUSE_CORNER_NOM]	  = "NOM",
+	[CPR4_MSM8976_APSS_FUSE_CORNER_TURBO]     = "TURBO",
 };
 
 enum cpr4_sdm632_power_apss_fuse_corner {
@@ -214,6 +230,166 @@ static const struct cpr3_fuse_param msm8953_apss_aging_init_quot_diff_param[]
 };
 
 /*
+ * MSM8953 APSS fuse parameter locations:
+ *
+ * Structs are organized with the following dimensions:
+ *	Outer: 0 to 3 for fuse corners from lowest to highest corner
+ *	Inner: large enough to hold the longest set of parameter segments which
+ *		fully defines a fuse parameter, +1 (for NULL termination).
+ *		Each segment corresponds to a contiguous group of bits from a
+ *		single fuse row.  These segments are concatentated together in
+ *		order to form the full fuse parameter value.  The segments for
+ *		a given parameter may correspond to different fuse rows.
+ */
+static const struct cpr3_fuse_param
+msm8953_apss_ro_sel_param[MSM8953_APSS_FUSE_CORNERS][2] = {
+	{{73, 12, 15}, {} },
+	{{73,  8, 11}, {} },
+	{{73,  4,  7}, {} },
+	{{73,  0,  3}, {} },
+};
+
+static const struct cpr3_fuse_param
+msm8953_apss_init_voltage_param[MSM8953_APSS_FUSE_CORNERS][2] = {
+	{{71, 24, 29}, {} },
+	{{71, 18, 23}, {} },
+	{{71, 12, 17}, {} },
+	{{71,  6, 11}, {} },
+};
+
+static const struct cpr3_fuse_param
+msm8953_apss_target_quot_param[MSM8953_APSS_FUSE_CORNERS][2] = {
+	{{72, 44, 55}, {} },
+	{{72, 32, 43}, {} },
+	{{72, 20, 31}, {} },
+	{{72,  8, 19}, {} },
+};
+
+static const struct cpr3_fuse_param
+msm8953_apss_quot_offset_param[MSM8953_APSS_FUSE_CORNERS][2] = {
+	{{} },
+	{{71, 46, 52}, {} },
+	{{71, 39, 45}, {} },
+	{{71, 32, 38}, {} },
+};
+
+static const struct cpr3_fuse_param msm8953_cpr_fusing_rev_param[] = {
+	{71, 53, 55},
+	{},
+};
+
+static const struct cpr3_fuse_param msm8953_apss_speed_bin_param[] = {
+	{36, 40, 42},
+	{},
+};
+
+static const struct cpr3_fuse_param msm8953_apss_foundry_id_param[] = {
+	{37, 40, 42},
+	{},
+};
+
+static const struct cpr3_fuse_param msm8953_cpr_boost_fuse_cfg_param[] = {
+	{36, 43, 45},
+	{},
+};
+
+static const struct cpr3_fuse_param msm8953_apss_boost_fuse_volt_param[] = {
+	{71, 0, 5},
+	{},
+};
+
+static const struct cpr3_fuse_param msm8953_misc_fuse_volt_adj_param[] = {
+	{36, 54, 54},
+	{},
+};
+
+static const struct cpr3_fuse_param msm8953_apss_aging_init_quot_diff_param[]
+= {
+	{72, 0, 7},
+	{},
+};
+
+/*
+ * MSM8976 APSS fuse parameter locations:
+ *
+ * Structs are organized with the following dimensions:
+ *	Outer: 0 to 3 for fuse corners from lowest to highest corner
+ *	Inner: large enough to hold the longest set of parameter segments which
+ *		fully defines a fuse parameter, +1 (for NULL termination).
+ *		Each segment corresponds to a contiguous group of bits from a
+ *		single fuse row.  These segments are concatenated together in
+ *		order to form the full fuse parameter value.  The segments for
+ *		a given parameter may correspond to different fuse rows.
+ */
+static const struct cpr3_fuse_param
+msm8976_apss_ro_sel_param[MSM8976_APSS_FUSE_CORNERS][2] = {
+	{{73, 12, 15}, {} },
+	{{73,  8, 11}, {} },
+	{{73,  4,  7}, {} },
+	{{73,  0,  3}, {} },
+};
+
+static const struct cpr3_fuse_param
+msm8976_apss_init_voltage_param[MSM8976_APSS_FUSE_CORNERS][2] = {
+	{{71, 24, 29}, {} },
+	{{71, 18, 23}, {} },
+	{{71, 12, 17}, {} },
+	{{71,  6, 11}, {} },
+};
+
+static const struct cpr3_fuse_param
+msm8976_apss_target_quot_param[MSM8976_APSS_FUSE_CORNERS][2] = {
+	{{72, 44, 55}, {} },
+	{{72, 32, 43}, {} },
+	{{72, 20, 31}, {} },
+	{{72,  8, 19}, {} },
+};
+
+static const struct cpr3_fuse_param
+msm8976_apss_quot_offset_param[MSM8976_APSS_FUSE_CORNERS][2] = {
+	{{} },
+	{{71, 46, 52}, {} },
+	{{71, 39, 45}, {} },
+	{{71, 32, 38}, {} },
+};
+
+static const struct cpr3_fuse_param msm8976_cpr_fusing_rev_param[] = {
+	{71, 53, 55},
+	{},
+};
+
+static const struct cpr3_fuse_param msm8976_apss_speed_bin_param[] = {
+	{36, 40, 42},
+	{},
+};
+
+static const struct cpr3_fuse_param msm8976_apss_foundry_id_param[] = {
+	{37, 40, 42},
+	{},
+};
+
+static const struct cpr3_fuse_param msm8976_cpr_boost_fuse_cfg_param[] = {
+	{36, 43, 45},
+	{},
+};
+
+static const struct cpr3_fuse_param msm8976_apss_boost_fuse_volt_param[] = {
+	{71, 0, 5},
+	{},
+};
+
+static const struct cpr3_fuse_param msm8976_misc_fuse_volt_adj_param[] = {
+	{36, 54, 54},
+	{},
+};
+
+static const struct cpr3_fuse_param msm8976_apss_aging_init_quot_diff_param[]
+= {
+	{72, 0, 7},
+	{},
+};
+
+/*
  * SDM632 APSS fuse parameter locations:
  *
  * Structs are organized with the following dimensions:
@@ -316,6 +492,17 @@ static const int msm8953_apss_fuse_ref_volt
 };
 
 /*
+ * Open loop voltage fuse reference voltages in microvolts for MSM8976
+ */
+static const int msm8976_apss_fuse_ref_volt
+	[MSM8976_APSS_FUSE_CORNERS] = {
+	645000,
+	720000,
+	865000,
+	1065000,
+};
+
+/*
  * Open loop voltage fuse reference voltages in microvolts for SDM632
  */
 static const int
@@ -339,6 +526,7 @@ sdm632_apss_fuse_ref_volt[2][SDM632_POWER_APSS_FUSE_CORNERS] = {
 #define CPR4_APSS_QUOT_OFFSET_SCALE	5
 
 #define MSM8953_APSS_CPR_SENSOR_COUNT	13
+#define MSM8976_APSS_CPR_SENSOR_COUNT	13
 #define SDM632_APSS_CPR_SENSOR_COUNT	16
 #define SDM632_APSS_THREAD0_SENSOR_MIN	0
 #define SDM632_APSS_THREAD0_SENSOR_MAX	6
@@ -347,19 +535,19 @@ sdm632_apss_fuse_ref_volt[2][SDM632_POWER_APSS_FUSE_CORNERS] = {
 
 #define CPR4_APSS_CPR_CLOCK_RATE	19200000
 
-#define MSM8953_APSS_MAX_TEMP_POINTS	3
-#define MSM8953_APSS_TEMP_SENSOR_ID_START	4
-#define MSM8953_APSS_TEMP_SENSOR_ID_END	13
-/*
- * Boost voltage fuse reference and ceiling voltages in microvolts for
- * MSM8953.
- */
-#define MSM8953_APSS_BOOST_FUSE_REF_VOLT	1140000
-#define MSM8953_APSS_BOOST_CEILING_VOLT	1140000
-#define MSM8953_APSS_BOOST_FLOOR_VOLT	900000
-#define MAX_BOOST_CONFIG_FUSE_VALUE		8
+#define CPR4_APSS_MAX_TEMP_POINTS	3
+#define CPR4_APSS_TEMP_SENSOR_ID_START	4
+#define CPR4_APSS_TEMP_SENSOR_ID_END	13
 
-#define MSM8953_APSS_CPR_SDELTA_CORE_COUNT	15
+/*
+ * Boost voltage fuse reference and ceiling voltages in microvolts
+ */
+#define CPR4_APSS_BOOST_FUSE_REF_VOLT	1140000
+#define CPR4_APSS_BOOST_CEILING_VOLT	1140000
+#define CPR4_APSS_BOOST_FLOOR_VOLT	900000
+#define MAX_BOOST_CONFIG_FUSE_VALUE	8
+
+#define CPR4_APSS_SDELTA_CORE_COUNT	15
 
 /*
  * Array of integer values mapped to each of the boost config fuse values to
@@ -367,20 +555,21 @@ sdm632_apss_fuse_ref_volt[2][SDM632_POWER_APSS_FUSE_CORNERS] = {
  */
 static bool boost_fuse[MAX_BOOST_CONFIG_FUSE_VALUE] = {0, 1, 1, 1, 1, 1, 1, 1};
 
-/* CPR Aging parameters for msm8953 */
-#define MSM8953_APSS_AGING_INIT_QUOT_DIFF_SCALE	1
-#define MSM8953_APSS_AGING_INIT_QUOT_DIFF_SIZE	8
-#define MSM8953_APSS_AGING_SENSOR_ID		6
+/* CPR Aging parameters */
+#define CPR4_APSS_AGING_INIT_QUOT_DIFF_SCALE	1
+#define CPR4_APSS_AGING_INIT_QUOT_DIFF_SIZE	8
+#define CPR4_APSS_AGING_SENSOR_ID		6
 
 /* Use a very high value for max aging margin to be applied */
-#define MSM8953_APSS_AGING_MAX_AGE_MARGIN_QUOT	(-1000)
+#define CPR4_APSS_AGING_MAX_AGE_MARGIN_QUOT	(-1000)
 
 /*
  * SOC IDs
  */
 enum soc_id {
 	MSM8953_SOC_ID	= 1,
-	SDM632_SOC_ID	= 2,
+	MSM8976_SOC_ID	= 2,
+	SDM632_SOC_ID	= 3,
 };
 
 /**
@@ -491,6 +680,113 @@ static int cpr4_msm8953_apss_read_fuse_data(struct cpr3_regulator *vreg,
 }
 
 /**
+ * cpr4_msm8976_apss_read_fuse_data() - load MSM8976 APSS specific fuse
+ *		parameter values
+ * @vreg:		Pointer to the CPR3 regulator
+ * @fuse:		APSS specific fuse data
+ *
+ * This function fills cpr4_apss_fuses struct with values read out of hardware
+ * fuses.
+ *
+ * Return: 0 on success, errno on failure
+ */
+static int cpr4_msm8976_apss_read_fuse_data(struct cpr3_regulator *vreg,
+		struct cpr4_apss_fuses *fuse)
+{
+	void __iomem *base = vreg->thread->ctrl->fuse_base;
+	int i, rc;
+
+	rc = cpr3_read_fuse_param(base, msm8976_misc_fuse_volt_adj_param,
+				&fuse->misc);
+	if (rc) {
+		cpr3_err(vreg, "Unable to read misc voltage adjustment fuse, rc=%d\n",
+			rc);
+		return rc;
+	}
+	cpr3_info(vreg, "CPR misc fuse value = %llu\n", fuse->misc);
+	if (fuse->misc >= MSM8976_MISC_FUSE_VAL_COUNT) {
+		cpr3_err(vreg, "CPR misc fuse value = %llu, should be < %lu\n",
+			fuse->misc, MSM8976_MISC_FUSE_VAL_COUNT);
+		return -EINVAL;
+	}
+
+	rc = cpr3_read_fuse_param(base, msm8976_apss_aging_init_quot_diff_param,
+				&fuse->aging_init_quot_diff);
+	if (rc) {
+		cpr3_err(vreg, "Unable to read aging initial quotient difference fuse, rc=%d\n",
+			rc);
+		return rc;
+	}
+
+	for (i = 0; i < MSM8976_APSS_FUSE_CORNERS; i++) {
+		rc = cpr3_read_fuse_param(base,
+				msm8976_apss_init_voltage_param[i],
+				&fuse->init_voltage[i]);
+		if (rc) {
+			cpr3_err(vreg, "Unable to read fuse-corner %d initial voltage fuse, rc=%d\n",
+				i, rc);
+			return rc;
+		}
+
+		rc = cpr3_read_fuse_param(base,
+				msm8976_apss_target_quot_param[i],
+				&fuse->target_quot[i]);
+		if (rc) {
+			cpr3_err(vreg, "Unable to read fuse-corner %d target quotient fuse, rc=%d\n",
+				i, rc);
+			return rc;
+		}
+
+		rc = cpr3_read_fuse_param(base,
+				msm8976_apss_ro_sel_param[i],
+				&fuse->ro_sel[i]);
+		if (rc) {
+			cpr3_err(vreg, "Unable to read fuse-corner %d RO select fuse, rc=%d\n",
+				i, rc);
+			return rc;
+		}
+
+		rc = cpr3_read_fuse_param(base,
+				msm8976_apss_quot_offset_param[i],
+				&fuse->quot_offset[i]);
+		if (rc) {
+			cpr3_err(vreg, "Unable to read fuse-corner %d quotient offset fuse, rc=%d\n",
+				i, rc);
+			return rc;
+		}
+	}
+
+	rc = cpr3_read_fuse_param(base, msm8976_cpr_boost_fuse_cfg_param,
+				&fuse->boost_cfg);
+	if (rc) {
+		cpr3_err(vreg, "Unable to read CPR boost config fuse, rc=%d\n",
+			rc);
+		return rc;
+	}
+	cpr3_info(vreg, "Voltage boost fuse config = %llu boost = %s\n",
+			fuse->boost_cfg, boost_fuse[fuse->boost_cfg]
+			? "enable" : "disable");
+
+	rc = cpr3_read_fuse_param(base,
+				msm8976_apss_boost_fuse_volt_param,
+				&fuse->boost_voltage);
+	if (rc) {
+		cpr3_err(vreg, "failed to read boost fuse voltage, rc=%d\n",
+			rc);
+		return rc;
+	}
+
+	vreg->fuse_combo = fuse->cpr_fusing_rev + 8 * fuse->speed_bin;
+	if (vreg->fuse_combo >= CPR4_MSM8976_APSS_FUSE_COMBO_COUNT) {
+		cpr3_err(vreg, "invalid CPR fuse combo = %d found\n",
+			vreg->fuse_combo);
+		return -EINVAL;
+	}
+
+	return 0;
+}
+
+/**
  * cpr4_sdm632_apss_read_fuse_data() - load SDM632 APSS specific fuse
  *		parameter values
  * @vreg:		Pointer to the CPR3 regulator
@@ -587,6 +883,9 @@ static int cpr4_apss_read_fuse_data(struct cpr3_regulator *vreg)
 	case MSM8953_SOC_ID:
 		fuse_corners = MSM8953_APSS_FUSE_CORNERS;
 		break;
+	case MSM8976_SOC_ID:
+		fuse_corners = MSM8976_APSS_FUSE_CORNERS;
+		break;
 	case SDM632_SOC_ID:
 		if (vreg->thread->thread_id == CPR4_APSS_POWER_CLUSTER_ID)
 			fuse_corners = SDM632_POWER_APSS_FUSE_CORNERS;
@@ -641,6 +940,14 @@ static int cpr4_apss_read_fuse_data(struct cpr3_regulator *vreg)
 		rc = cpr4_msm8953_apss_read_fuse_data(vreg, fuse);
 		if (rc) {
 			cpr3_err(vreg, "msm8953 apss fuse data read failed, rc=%d\n",
+				rc);
+			return rc;
+		}
+		break;
+	case MSM8976_SOC_ID:
+		rc = cpr4_msm8976_apss_read_fuse_data(vreg, fuse);
+		if (rc) {
+			cpr3_err(vreg, "msm8976 apss fuse data read failed, rc=%d\n",
 				rc);
 			return rc;
 		}
@@ -805,6 +1112,10 @@ static int cpr4_apss_calculate_open_loop_voltages(struct cpr3_regulator *vreg)
 		ref_volt = msm8953_apss_fuse_ref_volt;
 		corner_name = cpr4_msm8953_apss_fuse_corner_name;
 		break;
+	case MSM8976_SOC_ID:
+		ref_volt = msm8976_apss_fuse_ref_volt;
+		corner_name = cpr4_msm8976_apss_fuse_corner_name;
+		break;
 	case SDM632_SOC_ID:
 		ref_volt = sdm632_apss_fuse_ref_volt[id];
 		if (id == CPR4_APSS_POWER_CLUSTER_ID)
@@ -934,7 +1245,7 @@ _exit:
 }
 
 /**
- * cpr4_msm8953_apss_set_no_interpolation_quotients() - use the fused target
+ * cpr4_apss_set_no_interpolation_quotients() - use the fused target
  *		quotient values for lower frequencies.
  * @vreg:		Pointer to the CPR3 regulator
  * @volt_adjust:	Pointer to array of per-corner closed-loop adjustment
@@ -946,7 +1257,7 @@ _exit:
  *
  * Return: 0 on success, errno on failure
  */
-static int cpr4_msm8953_apss_set_no_interpolation_quotients(
+static int cpr4_apss_set_no_interpolation_quotients(
 			struct cpr3_regulator *vreg, int *volt_adjust,
 			int *volt_adjust_fuse, int *ro_scale)
 {
@@ -1014,6 +1325,11 @@ static int cpr4_apss_calculate_target_quotients(struct cpr3_regulator *vreg)
 		corner_name = cpr4_msm8953_apss_fuse_corner_name;
 		lowest_fuse_corner = CPR4_MSM8953_APSS_FUSE_CORNER_LOWSVS;
 		highest_fuse_corner = CPR4_MSM8953_APSS_FUSE_CORNER_TURBO_L1;
+		break;
+	case MSM8976_SOC_ID:
+		corner_name = cpr4_msm8976_apss_fuse_corner_name;
+		lowest_fuse_corner = CPR4_MSM8976_APSS_FUSE_CORNER_LOWSVS;
+		highest_fuse_corner = CPR4_MSM8976_APSS_FUSE_CORNER_TURBO;
 		break;
 	case SDM632_SOC_ID:
 		if (vreg->thread->thread_id == CPR4_APSS_POWER_CLUSTER_ID) {
@@ -1101,7 +1417,7 @@ static int cpr4_apss_calculate_target_quotients(struct cpr3_regulator *vreg)
 
 	if (!allow_interpolation) {
 		/* Use fused target quotients for lower frequencies. */
-		return cpr4_msm8953_apss_set_no_interpolation_quotients(
+		return cpr4_apss_set_no_interpolation_quotients(
 				vreg, volt_adjust, volt_adjust_fuse, ro_scale);
 	}
 
@@ -1300,9 +1616,9 @@ static int cpr4_apss_parse_temp_adj_properties(struct cpr3_controller *ctrl)
 
 	temp_point_count = len / sizeof(u32);
 	if (temp_point_count <= 0
-		|| temp_point_count > MSM8953_APSS_MAX_TEMP_POINTS) {
+		|| temp_point_count > CPR4_APSS_MAX_TEMP_POINTS) {
 		cpr3_err(ctrl, "invalid number of temperature points %d > %d (max)\n",
-			 temp_point_count, MSM8953_APSS_MAX_TEMP_POINTS);
+			 temp_point_count, CPR4_APSS_MAX_TEMP_POINTS);
 		return -EINVAL;
 	}
 
@@ -1344,8 +1660,8 @@ static int cpr4_apss_parse_temp_adj_properties(struct cpr3_controller *ctrl)
 		return -EINVAL;
 	}
 
-	ctrl->temp_sensor_id_start = MSM8953_APSS_TEMP_SENSOR_ID_START;
-	ctrl->temp_sensor_id_end = MSM8953_APSS_TEMP_SENSOR_ID_END;
+	ctrl->temp_sensor_id_start = CPR4_APSS_TEMP_SENSOR_ID_START;
+	ctrl->temp_sensor_id_end = CPR4_APSS_TEMP_SENSOR_ID_END;
 	ctrl->allow_temp_adj = true;
 	return rc;
 }
@@ -1384,7 +1700,7 @@ static int cpr4_apss_parse_boost_properties(struct cpr3_regulator *vreg)
 	}
 
 	boost_voltage = cpr3_convert_open_loop_voltage_fuse(
-				MSM8953_APSS_BOOST_FUSE_REF_VOLT,
+				CPR4_APSS_BOOST_FUSE_REF_VOLT,
 				CPR4_APSS_FUSE_STEP_VOLT,
 				fuse->boost_voltage,
 				CPR4_APSS_VOLTAGE_FUSE_SIZE);
@@ -1410,8 +1726,8 @@ static int cpr4_apss_parse_boost_properties(struct cpr3_regulator *vreg)
 	}
 
 	/* Limit boost voltage value between ceiling and floor voltage limits */
-	boost_voltage = min(boost_voltage, MSM8953_APSS_BOOST_CEILING_VOLT);
-	boost_voltage = max(boost_voltage, MSM8953_APSS_BOOST_FLOOR_VOLT);
+	boost_voltage = min(boost_voltage, CPR4_APSS_BOOST_CEILING_VOLT);
+	boost_voltage = max(boost_voltage, CPR4_APSS_BOOST_FLOOR_VOLT);
 
 	/*
 	 * The boost feature can only be used for the highest voltage corner.
@@ -1441,7 +1757,7 @@ static int cpr4_apss_parse_boost_properties(struct cpr3_regulator *vreg)
 	}
 
 	if (boost_num_cores <= 0
-		|| boost_num_cores > MSM8953_APSS_CPR_SDELTA_CORE_COUNT) {
+		|| boost_num_cores > CPR4_APSS_SDELTA_CORE_COUNT) {
 		cpr3_err(vreg, "Invalid boost number of cores = %d\n",
 			boost_num_cores);
 		return -EINVAL;
@@ -1480,9 +1796,9 @@ static int cpr4_apss_parse_boost_properties(struct cpr3_regulator *vreg)
 		 * and floor voltage limits
 		 */
 		final_boost_volt = min(final_boost_volt,
-					MSM8953_APSS_BOOST_CEILING_VOLT);
+					CPR4_APSS_BOOST_CEILING_VOLT);
 		final_boost_volt = max(final_boost_volt,
-					MSM8953_APSS_BOOST_FLOOR_VOLT);
+					CPR4_APSS_BOOST_FLOOR_VOLT);
 
 		boost_table[i] = (corner->open_loop_volt - final_boost_volt)
 					/ ctrl->step_volt;
@@ -1490,7 +1806,7 @@ static int cpr4_apss_parse_boost_properties(struct cpr3_regulator *vreg)
 			i, boost_table[i]);
 	}
 
-	corner->ceiling_volt = MSM8953_APSS_BOOST_CEILING_VOLT;
+	corner->ceiling_volt = CPR4_APSS_BOOST_CEILING_VOLT;
 	corner->sdelta->boost_table = boost_table;
 	corner->sdelta->allow_boost = true;
 	corner->sdelta->allow_core_count_adj = false;
@@ -1632,7 +1948,7 @@ static int cpr4_apss_init_regulator(struct cpr3_regulator *vreg)
 
 	if (vreg->allow_core_count_adj && (vreg->max_core_count <= 0
 				   || vreg->max_core_count >
-				   MSM8953_APSS_CPR_SDELTA_CORE_COUNT)) {
+				   CPR4_APSS_SDELTA_CORE_COUNT)) {
 		cpr3_err(vreg, "qcom,max-core-count has invalid value = %d\n",
 			 vreg->max_core_count);
 		return -EINVAL;
@@ -1697,14 +2013,14 @@ static int cpr4_apss_init_aging(struct cpr3_controller *ctrl)
 	if (!ctrl->aging_sensor)
 		return -ENOMEM;
 
-	ctrl->aging_sensor->sensor_id = MSM8953_APSS_AGING_SENSOR_ID;
+	ctrl->aging_sensor->sensor_id = CPR4_APSS_AGING_SENSOR_ID;
 	ctrl->aging_sensor->ro_scale = aging_ro_scale;
 
 	ctrl->aging_sensor->init_quot_diff
 		= cpr3_convert_open_loop_voltage_fuse(0,
-			MSM8953_APSS_AGING_INIT_QUOT_DIFF_SCALE,
+			CPR4_APSS_AGING_INIT_QUOT_DIFF_SCALE,
 			fuse->aging_init_quot_diff,
-			MSM8953_APSS_AGING_INIT_QUOT_DIFF_SIZE);
+			CPR4_APSS_AGING_INIT_QUOT_DIFF_SIZE);
 
 	if (ctrl->aging_sensor->init_quot_diff == 0) {
 		/*
@@ -1805,6 +2121,9 @@ static int cpr4_apss_init_controller(struct cpr3_controller *ctrl)
 	case MSM8953_SOC_ID:
 		ctrl->sensor_count = MSM8953_APSS_CPR_SENSOR_COUNT;
 		break;
+	case MSM8976_SOC_ID:
+		ctrl->sensor_count = MSM8976_APSS_CPR_SENSOR_COUNT;
+		break;
 	case SDM632_SOC_ID:
 		ctrl->sensor_count = SDM632_APSS_CPR_SENSOR_COUNT;
 		break;
@@ -1869,6 +2188,10 @@ static const struct of_device_id cpr4_regulator_match_table[] = {
 	{
 		.compatible = "qcom,cpr4-msm8953-apss-regulator",
 		.data = (void *)(uintptr_t)MSM8953_SOC_ID,
+	},
+	{
+		.compatible = "qcom,cpr4-msm8976-apss-regulator",
+		.data = (void *)(uintptr_t)MSM8976_SOC_ID,
 	},
 	{
 		.compatible = "qcom,cpr4-sdm632-apss-regulator",

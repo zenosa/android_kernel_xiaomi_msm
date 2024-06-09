@@ -134,13 +134,24 @@ struct msm_gfx_ldo {
 };
 
 #define MSM8953_LDO_FUSE_CORNERS		3
+#define MSM8976_LDO_FUSE_CORNERS		6
 #define LDO_MAX_OFFSET				0xFFFF
+
 static struct ldo_config msm8953_ldo_config[] = {
 	{LDO_ATEST_REG,		0x00000203},
 	{LDO_CFG0_REG,		0x05008600},
 	{LDO_CFG1_REG,		       0x0},
 	{LDO_CFG2_REG,		0x0000C3FC},
 	{LDO_VREF_TEST_CFG,	0x004B1102},
+	{LDO_MAX_OFFSET,	LDO_MAX_OFFSET},
+};
+
+static struct ldo_config msm8976_ldo_config[] = {
+	{LDO_ATEST_REG,		0x00000203},
+	{LDO_CFG0_REG,		0x0100A600},
+	{LDO_CFG1_REG,		0x000000A0},
+	{LDO_CFG2_REG,		0x0000C3FE},
+	{LDO_VREF_TEST_CFG,	0x00401100},
 	{LDO_MAX_OFFSET,	LDO_MAX_OFFSET},
 };
 
@@ -175,8 +186,33 @@ static const int msm8953_fuse_ref_volt[MSM8953_LDO_FUSE_CORNERS] = {
 	720000,
 };
 
+static struct fuse_param msm8976_ldo_enable_param[] = {
+	{71, 38, 38},
+	{},
+};
+
+static const struct fuse_param
+msm8976_init_voltage_param[MSM8976_LDO_FUSE_CORNERS][2] = {
+	{{65, 39, 43}, {} },
+	{{65, 39, 43}, {} },
+	{{65, 34, 38}, {} },
+	{{65, 34, 38}, {} },
+	{{65, 29, 33}, {} },
+	{{65, 24, 28}, {} },
+};
+
+static const int msm8976_fuse_ref_volt[MSM8976_LDO_FUSE_CORNERS] = {
+	585000,
+	645000,
+	725000,
+	790000,
+	870000,
+	925000,
+};
+
 enum {
 	MSM8953_SOC_ID,
+	MSM8976_SOC_ID,
 	SDM660_SOC_ID,
 };
 
@@ -1271,6 +1307,27 @@ static int msm_gfx_ldo_target_init(struct msm_gfx_ldo *ldo_vreg)
 	return 0;
 }
 
+static int msm8976_gfx_ldo_target_init(struct msm_gfx_ldo *ldo_vreg)
+{
+	int i;
+
+	/* MSM8976 */
+	ldo_vreg->init_volt_param = devm_kzalloc(ldo_vreg->dev,
+			(MSM8976_LDO_FUSE_CORNERS *
+			sizeof(struct fuse_param *)), GFP_KERNEL);
+	if (!ldo_vreg->init_volt_param)
+		return -ENOMEM;
+
+	for (i = 0; i < MSM8976_LDO_FUSE_CORNERS; i++)
+		ldo_vreg->init_volt_param[i] =
+				msm8976_init_voltage_param[i];
+
+	ldo_vreg->ref_volt = msm8976_fuse_ref_volt;
+	ldo_vreg->ldo_enable_param = msm8976_ldo_enable_param;
+
+	return 0;
+}
+
 static int debugfs_ldo_mode_disable_set(void *data, u64 val)
 {
 	struct msm_gfx_ldo *ldo_vreg = data;
@@ -1501,6 +1558,10 @@ static const struct of_device_id msm_gfx_ldo_match_table[] = {
 		.data = (void *)(uintptr_t)MSM8953_SOC_ID,
 	},
 	{
+		.compatible = "qcom,msm8976-gfx-ldo",
+		.data = (void *)(uintptr_t)MSM8976_SOC_ID,
+	},
+	{
 		.compatible = "qcom,sdm660-gfx-ldo",
 		.data = (void *)(uintptr_t)SDM660_SOC_ID,
 	},
@@ -1553,6 +1614,16 @@ static int msm_gfx_ldo_probe(struct platform_device *pdev)
 		rc = msm_gfx_ldo_corner_config_init(ldo_vreg, pdev);
 		if (rc) {
 			pr_err("ldo corner handling initialization failed, rc=%d\n",
+				rc);
+			return rc;
+		}
+		break;
+	case MSM8976_SOC_ID:
+		ldo_vreg->ldo_init_config = msm8976_ldo_config;
+		ldo_vreg->ops_type = CORNER;
+		rc = msm8976_gfx_ldo_target_init(ldo_vreg);
+		if (rc) {
+			pr_err("ldo target initialization failed, rc=%d\n",
 				rc);
 			return rc;
 		}

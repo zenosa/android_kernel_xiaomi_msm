@@ -280,58 +280,25 @@
 		#clock-cells = <1>;
 	};
 
-	clock_cpu: qcom,cpu-clock-8976@b016000 {
-		#address-cells = <1>;
-		#size-cells = <1>;
-		compatible = "qcom,cpu-clock-8976";
-		reg =   <0xb114000  0x68>,
-			<0xb014000  0x68>,
-			<0xb116000  0x40>,
-			<0xb016000  0x40>,
-			<0xb1d0000  0x40>,
-			<0xb111050  0x08>,
-			<0xb011050  0x08>,
-			<0xb1d1050  0x08>,
-			<0x00a412c  0x08>;
-		reg-names = "rcgwr-c0-base", "rcgwr-c1-base",
-			    "c0-pll", "c1-pll", "cci-pll",
-			    "c0-mux", "c1-mux", "cci-mux",
-			    "efuse";
-		/* RCGwR settings */
-		qcom,num-clusters = <2>;
-		qcom,lmh-sid-c0  = < 0x30 0x077706db>,
-				   < 0x34 0x05550249>,
-				   < 0x38 0x00000111>;
-		qcom,link-sid-c0 = < 0x40 0x000fc987>;
-		qcom,dfs-sid-c0  = < 0x10 0xfefebff7>,
-				   < 0x14 0xfdff7fef>,
-				   < 0x18 0xfbffdefb>,
-				   < 0x1c 0xb69b5555>,
-				   < 0x20 0x24929249>,
-				   < 0x24 0x49241112>,
-				   < 0x28 0x11112111>,
-				   < 0x2c 0x00008102>;
-		qcom,lmh-sid-c1  = < 0x30 0x077706db>,
-				   < 0x34 0x05550249>,
-				   < 0x38 0x00000111>;
-		qcom,link-sid-c1 = < 0x40 0x000fc987>;
-		qcom,dfs-sid-c1  = < 0x10 0xfefebff7>,
-				   < 0x14 0xfdff7fef>,
-				   < 0x18 0xfbffdefb>,
-				   < 0x1c 0xb69b5555>,
-				   < 0x20 0x24929249>,
-				   < 0x24 0x49241112>,
-				   < 0x28 0x11112111>,
-				   < 0x2c 0x00008102>;
+	clock_cpu: qcom,cpucc@179c0000 {
+		compatible = "qcom,clk-cpu-osm";
+		reg = <0x179c0000 0x4000>, <0x17916000 0x1000>,
+		      <0x17816000 0x1000>, <0x179d1000 0x1000>,
+		      <0x00784130 0x8>, <0x00784130 0x8>;
+		reg-names = "osm", "pwrcl_pll", "perfcl_pll",
+			    "apcs_common", "pwrcl_efuse",
+			    "perfcl_efuse";
 
-		vdd_mx_hf-supply = <&pm8950_s6_level_ao>;
-		vdd_hf_pll-supply = <&pm8950_l7_ao>;
-		vdd_mx_sr-supply = <&pm8950_s6_level_ao>;
-		vdd_a72-supply = <&apc1_vreg_corner>;
-		vdd_a53-supply = <&apc0_vreg_corner>;
-		vdd_cci-supply = <&apc0_vreg_corner>;
-		qcom,speed0-bin-v0-c0 =
-			<          0 0>,
+		clocks = <&xo_board>,
+			 <&clock_gcc GPLL0>;
+		clock-names = "xo", "aux_clock";
+		#clock-cells = <1>;
+
+		interrupts = <GIC_SPI 35 IRQ_TYPE_EDGE_RISING>,
+			     <GIC_SPI 36 IRQ_TYPE_EDGE_RISING>;
+		interrupt-names = "pwrcl-irq", "perfcl-irq";
+
+		qcom,pwrcl-speedbin0-v0 =
 			<  400000000 1>,
 			<  691200000 2>,
 			<  806400000 3>,
@@ -340,23 +307,7 @@
 			< 1305600000 6>,
 			< 1382400000 7>,
 			< 1401600000 8>;
-		qcom,speed0-bin-v0-c1 =
-			<          0 0>,
-			<  400000000 1>,
-			<  883200000 2>,
-			< 1190400000 3>,
-			< 1382400000 4>,
-			< 1612800000 5>,
-			< 1747200000 6>;
-		qcom,speed0-bin-v0-cci =
-			<          0 0>,
-			<  307200000 1>,
-			<  403200000 3>,
-			<  441600000 4>,
-			<  556800000 5>,
-			<  614400000 6>;
-		qcom,speed1-bin-v0-c0 =
-			<          0 0>,
+		qcom,pwrcl-speedbin1-v0 =
 			<  400000000 1>,
 			<  691200000 2>,
 			<  806400000 3>,
@@ -364,39 +315,98 @@
 			< 1190400000 5>,
 			< 1305600000 6>,
 			< 1382400000 7>,
-			< 1401600000 8>,
-			< 1440000000 9>;
-		qcom,speed1-bin-v0-c1 =
-			<          0 0>,
+			< 1401600000 8>;
+		qcom,pwrcl-speedbin2-v0 =
 			<  400000000 1>,
-			<  883200000 2>,
-			< 1190400000 3>,
-			< 1382400000 4>,
-			< 1612800000 5>,
-			< 1747200000 6>,
-			< 1804800000 7>;
-		qcom,speed1-bin-v0-cci =
-			<          0 0>,
-			<  307200000 1>,
-			<  403200000 3>,
-			<  441600000 4>,
-			<  556800000 5>,
-			<  614400000 6>;
-		#clock-cells = <1>;
-		ranges;
-		qcom,spm@0 {
-			compatible = "qcom,cpu-spm-8976";
-			reg = <0x0b111200 0x100>,
-			      <0x0b011200 0x100>,
-			      <0x0b1d4000 0x100>;
-			reg-names = "spm_c0_base", "spm_c1_base",
-				     "spm_cci_base";
-		};
+			<  691200000 2>,
+			<  806400000 3>,
+			< 1017600000 4>,
+			< 1190400000 5>,
+			< 1305600000 6>,
+			< 1382400000 7>,
+			< 1401600000 8>;
+		qcom,pwrcl-speedbin3-v0 =
+			<  400000000 1>,
+			<  691200000 2>,
+			<  806400000 3>,
+			< 1017600000 4>,
+			< 1190400000 5>,
+			< 1305600000 6>,
+			< 1382400000 7>,
+			< 1401600000 8>;
+		qcom,perfcl-speedbin0-v0 =
+			<  400000000 1>,
+			<  633600000 2>,
+			<  883200000 3>,
+			< 1190400000 4>,
+			< 1382400000 5>,
+			< 1612800000 6>,
+			< 1747200000 7>,
+			< 1804800000 8>;
+		qcom,perfcl-speedbin1-v0 =
+			<  400000000 1>,
+			<  633600000 2>,
+			<  883200000 3>,
+			< 1190400000 4>,
+			< 1382400000 5>,
+			< 1612800000 6>,
+			< 1747200000 7>,
+			< 1804800000 8>;
+		qcom,perfcl-speedbin2-v0 =
+			<  400000000 1>,
+			<  633600000 2>,
+			<  883200000 3>,
+			< 1190400000 4>,
+			< 1382400000 5>,
+			< 1612800000 6>,
+			< 1747200000 7>,
+			< 1804800000 8>;
+		qcom,perfcl-speedbin3-v0 =
+			<  400000000 1>,
+			<  633600000 2>,
+			<  883200000 3>,
+			< 1190400000 4>,
+			< 1382400000 5>,
+			< 1612800000 6>,
+			< 1747200000 7>,
+			< 1804800000 8>;
+
+		qcom,boost-fsm-en;
+		qcom,safe-fsm-en;
+		qcom,ps-fsm-en;
+		qcom,droop-fsm-en;
+		qcom,wfx-fsm-en;
+		qcom,pc-fsm-en;
+
+		qcom,up-timer = <1000 1000>;
+		qcom,down-timer = <1000 1000>;
+		qcom,set-ret-inactive;
+		qcom,enable-llm-freq-vote;
+		qcom,llm-freq-up-timer = <327675 327675>;
+		qcom,llm-freq-down-timer = <327675 327675>;
+		qcom,enable-llm-volt-vote;
+		qcom,llm-volt-up-timer = <327675 327675>;
+		qcom,llm-volt-down-timer = <327675 327675>;
+		qcom,cc-reads = <10>;
+		qcom,cc-delay = <5>;
+		qcom,cc-factor = <100>;
+		qcom,xo-clk-rate = <19200000>;
+		qcom,osm-clk-rate = <200000000>;
+
+		qcom,l-val-base = <0x17916004 0x17816004>;
+		qcom,apcs-itm-present = <0x179d143c 0x179d143c>;
+		qcom,apcs-pll-user-ctl = <0x1791600c 0x1781600c>;
+		qcom,apcs-cfg-rcgr = <0x17911054 0x17811054>;
+		qcom,apcs-cmd-rcgr = <0x17911050 0x17811050>;
+		qcom,apm-mode-ctl = <0x179d0004 0x179d0010>;
+		qcom,apm-ctrl-status = <0x179d000c 0x179d0018>;
+		qcom,apm-threshold-voltage = <872000>;
 	};
 
 	clock_debug: qcom,cc-debug@1874000 {
 		compatible = "qcom,msm8976-debugcc";
 		qcom,gcc = <&clock_gcc>;
+		qcom,cpu = <&clock_cpu>;
 		clocks = <&xo_board>;
 		clock-names = "xo";
 		#clock-cells = <1>;

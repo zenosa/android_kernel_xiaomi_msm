@@ -312,8 +312,66 @@ static struct clk_debug_mux gcc_debug_mux = {
 	},
 };
 
+static const char *const cpu_cc_debug_mux_parent_names[] = {
+	"perfcl_clk",
+	"pwrcl_clk",
+};
+
+static int cpu_cc_debug_mux_sels[] = {
+	0x0,		/* pwrcl_clk */
+        0x1,		/* perfcl_clk */
+};
+
+static int cpu_cc_debug_mux_pre_divs[] = {
+	0x1,		/* perfcl_clk */
+	0x1,		/* pwrcl_clk */
+};
+
+static struct clk_debug_mux cpu_cc_debug_mux = {
+	.priv = &debug_mux_priv,
+	.debug_offset = 0x0,
+	.post_div_offset = 0x0,
+	.cbcr_offset = U32_MAX,
+	.src_sel_mask = 0x3FF00,
+	.src_sel_shift = 8,
+	.post_div_mask = 0xF0000000,
+	.post_div_shift = 28,
+	.post_div_val = 1,
+	.mux_sels = cpu_cc_debug_mux_sels,
+	.pre_div_vals = cpu_cc_debug_mux_pre_divs,
+	.hw.init = &(struct clk_init_data){
+		.name = "cpu_cc_debug_mux",
+		.ops = &clk_debug_mux_ops,
+		.parent_names = cpu_cc_debug_mux_parent_names,
+		.num_parents = ARRAY_SIZE(cpu_cc_debug_mux_parent_names),
+		.flags = CLK_IS_MEASURE,
+	},
+};
+
+static struct clk_dummy pwrcl_clk = {
+	.rrate = 1000,
+	.hw.init = &(struct clk_init_data){
+		.name = "pwrcl_clk",
+		.ops = &clk_dummy_ops,
+	},
+};
+
+static struct clk_dummy perfcl_clk = {
+	.rrate = 1000,
+	.hw.init = &(struct clk_init_data){
+		.name = "perfcl_clk",
+		.ops = &clk_dummy_ops,
+	},
+};
+
+struct clk_hw *debugcc_msm8976_hws[] = {
+	&perfcl_clk.hw,
+	&pwrcl_clk.hw,
+};
+
 static struct mux_regmap_names mux_list[] = {
 	{ .mux = &gcc_debug_mux, .regmap_name = "qcom,gcc" },
+	{ .mux = &cpu_cc_debug_mux, .regmap_name = "qcom,cpu" },
 };
 
 static const struct of_device_id clk_debug_match_table[] = {

@@ -824,13 +824,13 @@ static struct clk_fixed_factor sys_apcsaux_clk_gcc = {
 static struct clk_init_data osm_clks_init[] = {
 	[0] = {
 		.name = "pwrcl_clk",
-		.parent_names = (const char *[]){ "cxo_a" },
+		.parent_names = (const char *[]){ "cxo" },
 		.num_parents = 1,
 		.ops = &clk_ops_cpu_osm_660,
 	},
 	[1] = {
 		.name = "perfcl_clk",
-		.parent_names = (const char *[]){ "cxo_a" },
+		.parent_names = (const char *[]){ "cxo" },
 		.num_parents = 1,
 		.ops = &clk_ops_cpu_osm_660,
 	},
@@ -3139,7 +3139,7 @@ static int clk_cpu_osm_driver_probe(struct platform_device *pdev)
 	 * Require the RPM-XO clock and GCC-HMSS-GPLL0 clocks to be registererd
 	 * before OSM.
 	 */
-	ext_xo_clk = devm_clk_get(dev, "xo_a");
+	ext_xo_clk = devm_clk_get(dev, "xo");
 	if (IS_ERR(ext_xo_clk)) {
 		if (PTR_ERR(ext_xo_clk) != -EPROBE_DEFER)
 			dev_err(dev, "Unable to get xo clock\n");

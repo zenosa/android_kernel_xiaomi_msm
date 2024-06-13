@@ -590,11 +590,11 @@ config SDM_MMCC_660
 	  Say Y if you want to support multimedia devices such as display,
 	  video encode/decode, camera, etc.
 
-config CLOCK_CPU_OSM_660
-	tristate "OSM CPU Clock Controller for SDM660"
+config CLOCK_CPU_OSM
+	tristate "OSM CPU Clock Controller"
 	depends on COMMON_CLK_QCOM
 	help
-	 Support for the OSM clock controller for SDM660.
+	 Support for the OSM clock controller on MSM-based devices.
 	 Operating State Manager (OSM) is a hardware engine used by some
 	 Qualcomm Technologies, Inc. (QTI) SoCs to manage frequency and
 	 voltage scaling in hardware. OSM is capable of controlling

@@ -5332,3 +5332,6 @@ int mpq_dmx_oob_command(struct dvb_demux_feed *feed,
 	mutex_unlock(&mpq_demux->mutex);
 	return ret;
 }
+
+MODULE_DESCRIPTION("Qualcomm Technologies Inc. Demux Plugin Common");
+MODULE_LICENSE("GPL v2");

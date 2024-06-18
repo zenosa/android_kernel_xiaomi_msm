@@ -19,6 +19,6 @@ jobs:
       uses: zenosa/android-kernel-actions@master
       with:
         arch: arm64                            # Specify arch
-        compiler: clang/11/binutils            # Specify toolchain to use
+        compiler: gcc/12                      # Specify toolchain to use
         defconfig: kenzo_defconfig           # Specify defconfig to use
         image: Image.gz-dtb
